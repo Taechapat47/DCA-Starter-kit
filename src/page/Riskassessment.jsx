@@ -102,6 +102,8 @@ const riskLevelText = [
   { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "ควรลงทุนในกองทุนรวมหุ้น 20% หุ้น 80%", color: "text-green-600" }
 ];
 
+const API_BASE_URL = 'http://localhost:8000/api';
+
 export default function RiskAssessment() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState(Array(questions.length).fill(null));
@@ -170,18 +172,18 @@ export default function RiskAssessment() {
         answers: JSON.stringify(answersDetail)
       };
 
-
-      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxanfvB4RGq3N2wVZkRwSB00aIrLeMtwNGAFpE6RoBqmdbtGZhguowuBUQpKf-VpnY7/exec';
       
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
+      const response = await fetch(`${API_BASE_URL}/assessment`, {
         method: 'POST',
-        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data)
       });
 
+      if (!response.ok) {
+        throw new Error('Server responded with an error!');
+      }
 
       setSubmitted(true);
       alert('ส่งผลการประเมินเรียบร้อยแล้ว!');
@@ -196,12 +198,11 @@ export default function RiskAssessment() {
   const fetchHistoryData = async () => {
     setIsLoadingHistory(true);
     try {
-     
-      const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxanfvB4RGq3N2wVZkRwSB00aIrLeMtwNGAFpE6RoBqmdbtGZhguowuBUQpKf-VpnY7/exec';
+      const response = await fetch(`${API_BASE_URL}/assessment/history`);
       
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
-        method: 'GET'
-      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch history from server.');
+      }
       
       const data = await response.json();
       

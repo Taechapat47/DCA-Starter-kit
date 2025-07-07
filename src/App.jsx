@@ -5,7 +5,7 @@ import {
     Route,
 } from "react-router-dom";
 import Homepage from "./page/Homepage.jsx";
-import Riskassessment from "./component/Riskassessment.jsx";
+import Riskassessment from "./page/Riskassessment.jsx";
 import Portfolio from "./page/Portfolio.jsx";
 import Navbar from "./component/Navbar";
 
