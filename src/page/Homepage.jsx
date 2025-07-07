@@ -5,27 +5,6 @@ import { FaChartLine, FaStar, FaPlayCircle } from "react-icons/fa";
 export default function DcaPage() {
   return (
     <div className="min-h-screen bg-[#f7fbff]">
-      {/* Navbar */}
-      <nav className="flex items-center justify-between bg-[#22739c] px-8 py-3 rounded-t-xl shadow-md">
-        <div className="flex items-center gap-2">
-          <div className="bg-white/30 rounded-full p-2">
-            {/* ไอคอนกราฟกลม ๆ */}
-            <svg width={22} height={22} fill="none" viewBox="0 0 24 24">
-              <circle cx={12} cy={12} r={10} fill="#fff" opacity=".5"/>
-              <rect x={8} y={10} width={2} height={6} fill="#22739c"/>
-              <rect x={12} y={7} width={2} height={9} fill="#22739c"/>
-              <rect x={16} y={13} width={2} height={3} fill="#22739c"/>
-            </svg>
-          </div>
-          <span className="text-white text-2xl font-bold ml-2">NAME</span>
-        </div>
-        <div className="flex items-center gap-8 text-lg font-semibold">
-          <span className="text-white border-b-2 border-white pb-0.5 cursor-pointer">DCA</span>
-          <span className="text-white/80 cursor-pointer">ประเมินความเสี่ยง</span>
-          <span className="text-white/80 cursor-pointer">พอร์ตฟอลิโอ</span>
-        </div>
-      </nav>
-
       {/* Title */}
       <div className="flex flex-col items-center mt-2">
         <h1 className="text-2xl font-bold text-[#22739c] my-5">DCA</h1>
@@ -80,7 +59,7 @@ export default function DcaPage() {
               <div className="text-[#22739c] font-semibold mb-1">ประเมินความเสี่ยง</div>
               <div className="text-gray-500 text-sm">ทำแบบประเมินเพื่อดูระดับความเสี่ยงที่เหมาะกับคุณ</div>
             </div>
-            <Link to="/assessment">
+            <Link to="/Riskassessment">
               <button className="mt-3 md:mt-0 bg-[#4faee6] text-white font-semibold px-6 py-2 rounded-full shadow hover:bg-[#22739c] transition-all">
                 เริ่มทำแบบประเมิน
               </button>
