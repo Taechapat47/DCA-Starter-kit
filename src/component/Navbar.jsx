@@ -16,7 +16,7 @@ export default function Navbar() {
             <rect x={16} y={13} width={2} height={3} fill="#22739c"/>
           </svg>
         </div>
-        <span className="text-white text-2xl font-bold ml-2">NAME</span>
+        <span className="text-white text-2xl font-bold ml-2">DCA Starter KIT</span>
       </div>
       <div className="flex items-center gap-8 text-lg font-semibold">
         <Link
@@ -46,6 +46,16 @@ export default function Navbar() {
           }`}
         >
           พอร์ตฟอลิโอ
+        </Link>
+        <Link
+          to="/marketcap"
+          className={`pb-0.5 ${
+            location.pathname === "/marketcap"
+              ? "text-white border-b-2 border-white"
+              : "text-white/80"
+          }`}
+        >
+          MarketCap
         </Link>
       </div>
     </nav>
