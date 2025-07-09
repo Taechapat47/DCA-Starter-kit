@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Send, RefreshCw, CheckCircle, TrendingUp, History, Eye } from "lucide-react";
 
 const questions = [
@@ -104,6 +105,17 @@ const riskLevelText = [
 
 const API_BASE_URL = 'http://localhost:8000/api';
 
+const getOrCreateAnonymousId = () => {
+  const ANONYMOUS_ID_KEY = 'riskAssessmentAnonymousId';
+  let userId = localStorage.getItem(ANONYMOUS_ID_KEY);
+
+  if (!userId) {
+    userId = crypto.randomUUID();
+    localStorage.setItem(ANONYMOUS_ID_KEY, userId);
+  }
+  return userId;
+};
+
 export default function RiskAssessment() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState(Array(questions.length).fill(null));
@@ -113,13 +125,20 @@ export default function RiskAssessment() {
   const [showHistory, setShowHistory] = useState(false);
   const [historyData, setHistoryData] = useState([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  
+  const location = useLocation();
+  const part1Data = location.state || {};
+  const [anonymousId, setAnonymousId] = useState(null);
+
+  useEffect(() => {
+    const id = getOrCreateAnonymousId();
+    setAnonymousId(id);
+  }, []);
 
   const handleSelect = (cIdx) => {
     const next = [...answers];
     next[currentQuestion] = cIdx;
     setAnswers(next);
-    
-   
     if (currentQuestion < questions.length - 1) {
       setTimeout(() => {
         setCurrentQuestion(prev => prev + 1);
@@ -128,7 +147,6 @@ export default function RiskAssessment() {
   };
 
   const handleSubmit = () => {
-    
     const unansweredQuestions = [];
     answers.forEach((answer, index) => {
       if (answer === null) {
@@ -147,12 +165,15 @@ export default function RiskAssessment() {
   };
 
   const totalScore = answers.reduce((sum, ans) => ans !== null ? sum + (ans + 1) : sum, 0);
-
   const riskResult = riskLevelText.find(
     rl => totalScore >= rl.min && totalScore <= rl.max
   );
 
   const sendToGoogleSheets = async () => {
+    if (!anonymousId) {
+      alert("ไม่สามารถระบุตัวตนได้ กรุณาลองรีเฟรชหน้าเว็บ");
+      return;
+    }
     setIsSubmitting(true);
     
     try {
@@ -165,11 +186,13 @@ export default function RiskAssessment() {
 
       // ข้อมูลที่จะส่งไป Google Sheets
       const data = {
+        anonymousId: anonymousId,
         timestamp: new Date().toISOString(),
         totalScore: totalScore,
         riskLevel: riskResult?.label,
         riskAdvice: riskResult?.advice,
-        answers: JSON.stringify(answersDetail)
+        answers: JSON.stringify(answersDetail),
+        ...part1Data
       };
 
       
@@ -196,9 +219,13 @@ export default function RiskAssessment() {
   };
 
   const fetchHistoryData = async () => {
+    if (!anonymousId) {
+      alert("ไม่สามารถระบุตัวตนได้ กรุณาลองรีเฟรชหน้าเว็บ");
+      return;
+    }
     setIsLoadingHistory(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/assessment/history`);
+      const response = await fetch(`${API_BASE_URL}/assessment/history?userId=${anonymousId}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch history from server.');
@@ -208,11 +235,11 @@ export default function RiskAssessment() {
       
       // ประมวลผลข้อมูล (ข้ามหัวตาราง)
       const processedData = data.slice(1).map(row => ({
-        date: row[0],
-        score: row[1],
-        riskLevel: row[2],
-        advice: row[3]
-      })).reverse(); // แสดงล่าสุดก่อน
+        date: row[1], // คอลัมน์ timestamp อยู่ที่ index 1
+        score: parseInt(row[2], 10), // score อยู่ที่ index 2
+        riskLevel: row[3],
+        advice: row[4]
+      })).reverse();
       
       setHistoryData(processedData);
       setShowHistory(true);
