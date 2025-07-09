@@ -5,7 +5,7 @@ const axios = require('axios'); // ใช้ axios เพื่อความ�
 const app = express();
 const port = 8000;
 
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxanfvB4RGq3N2wVZkRwSB00aIrLeMtwNGAFpE6RoBqmdbtGZhguowuBUQpKf-VpnY7/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyiqz8ja3k5odTGq56wO3_ZTAwZylEimzTZi0xr4i7Zypdq47Vui8r1TRmtojC4uPcTAw/exec';
 
 app.use(cors());
 app.use(express.json());
@@ -31,13 +31,23 @@ app.post('/api/assessment', async (req, res) => {
 
 app.get('/api/assessment/history', async (req, res) => {
   try {
-    const response = await axios.get(GOOGLE_SCRIPT_URL);
+    // ดึง userId จาก query string ที่ React ส่งมา
+    const userId = req.query.userId;
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required.' });
+    }
 
+    // สร้าง URL ใหม่เพื่อส่ง userId ไปให้ Google Script เป็น parameter
+    const urlWithParams = `${GOOGLE_SCRIPT_URL}?userId=${userId}`;
+    console.log('Fetching history for user:', userId);
+    
+    const response = await axios.get(urlWithParams);
+    
     console.log('History data fetched from Google Script.');
     res.status(200).json(response.data);
 
   } catch (error) {
-    console.error('Error fetching history from Google Sheets:', error);
+    console.error('Error fetching history from Google Sheets:', error.message);
     res.status(500).json({ success: false, message: 'Failed to fetch history.' });
   }
 });

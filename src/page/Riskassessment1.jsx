@@ -10,8 +10,15 @@ export default function Riskassessment1() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // เมื่อกดปุ่มจะไปที่หน้า Riskassessment2 โดยตรง
-    navigate("/Riskassessment2");
+    // ส่งข้อมูลจากฟอร์มนี้ไปยังหน้าถัดไปผ่าน state ของ router
+    navigate("/Riskassessment2", {
+      state: {
+        goal,
+        monthly,
+        dcaIncrease,
+        investmentType,
+      },
+    });
   };
 
   return (
