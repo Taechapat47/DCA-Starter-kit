@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Send, RefreshCw, CheckCircle, TrendingUp, History, Eye } from "lucide-react";
 
 const questions = [
@@ -125,10 +125,12 @@ export default function RiskAssessment() {
   const [showHistory, setShowHistory] = useState(false);
   const [historyData, setHistoryData] = useState([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
-  
+
   const location = useLocation();
   const part1Data = location.state || {};
   const [anonymousId, setAnonymousId] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const id = getOrCreateAnonymousId();
@@ -156,7 +158,6 @@ export default function RiskAssessment() {
 
     if (unansweredQuestions.length > 0) {
       alert(`กรุณาตอบคำถามให้ครบทุกข้อ\nข้อที่ยังไม่ได้ตอบ: ${unansweredQuestions.join(', ')}`);
-     
       setCurrentQuestion(unansweredQuestions[0] - 1);
       return;
     }
@@ -175,16 +176,14 @@ export default function RiskAssessment() {
       return;
     }
     setIsSubmitting(true);
-    
+
     try {
-      // รวบรวมข้อมูลคำตอบ
       const answersDetail = answers.map((answerIndex, questionIndex) => ({
         question: questions[questionIndex].question,
         answer: questions[questionIndex].choices[answerIndex],
         score: answerIndex + 1
       }));
 
-      // ข้อมูลที่จะส่งไป Google Sheets
       const data = {
         anonymousId: anonymousId,
         timestamp: new Date().toISOString(),
@@ -195,7 +194,6 @@ export default function RiskAssessment() {
         ...part1Data
       };
 
-      
       const response = await fetch(`${API_BASE_URL}/assessment`, {
         method: 'POST',
         headers: {
@@ -226,21 +224,20 @@ export default function RiskAssessment() {
     setIsLoadingHistory(true);
     try {
       const response = await fetch(`${API_BASE_URL}/assessment/history?userId=${anonymousId}`);
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch history from server.');
       }
-      
+
       const data = await response.json();
-      
-      // ประมวลผลข้อมูล (ข้ามหัวตาราง)
+
       const processedData = data.slice(1).map(row => ({
-        date: row[1], // คอลัมน์ timestamp อยู่ที่ index 1
-        score: parseInt(row[2], 10), // score อยู่ที่ index 2
+        date: row[1],
+        score: parseInt(row[2], 10),
         riskLevel: row[3],
         advice: row[4]
       })).reverse();
-      
+
       setHistoryData(processedData);
       setShowHistory(true);
     } catch (error) {
@@ -251,22 +248,24 @@ export default function RiskAssessment() {
     }
   };
 
+  // *** ส่วนที่เปลี่ยน ***
   const resetAssessment = () => {
     setCurrentQuestion(0);
     setShowResult(false);
     setAnswers(Array(questions.length).fill(null));
     setSubmitted(false);
     setShowHistory(false);
+    navigate("/Riskassessment1");
   };
+  // *** จบส่วนที่เปลี่ยน ***
 
-  // Safety check สำหรับคำถามปัจจุบัน
   const currentQ = questions[currentQuestion];
   if (!currentQ) {
     return (
       <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-6">
         <div className="text-center">
           <p className="text-red-600">เกิดข้อผิดพลาด: ไม่พบคำถาม</p>
-          <button 
+          <button
             onClick={() => setCurrentQuestion(0)}
             className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg"
           >
@@ -285,8 +284,6 @@ export default function RiskAssessment() {
           <h1 className="text-3xl font-bold text-gray-800">แบบประเมินความเสี่ยงการลงทุน</h1>
         </div>
         <p className="text-gray-600">ประเมินระดับความเสี่ยงที่เหมาะสมกับคุณ</p>
-        
-        {/* ปุ่มดูประวัติ */}
         <div className="mt-4">
           <button
             onClick={fetchHistoryData}
@@ -307,7 +304,6 @@ export default function RiskAssessment() {
           </button>
         </div>
       </div>
-
       {showHistory && (
         <div className="mb-8 bg-gray-50 p-6 rounded-lg">
           <div className="flex justify-between items-center mb-4">
@@ -319,10 +315,8 @@ export default function RiskAssessment() {
               ✕
             </button>
           </div>
-          
           {historyData.length > 0 ? (
             <>
-              {/* สถิติรวม */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div className="bg-white p-4 rounded-lg text-center">
                   <div className="text-2xl font-bold text-blue-600">{historyData.length}</div>
@@ -341,8 +335,6 @@ export default function RiskAssessment() {
                   <div className="text-sm text-gray-600">ล่าสุด</div>
                 </div>
               </div>
-
-              {/* รายการประวัติ */}
               <div className="space-y-3 max-h-60 overflow-y-auto">
                 {historyData.slice(0, 10).map((item, index) => (
                   <div key={index} className="bg-white p-3 rounded border flex justify-between items-center">
@@ -378,13 +370,11 @@ export default function RiskAssessment() {
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
-              <div 
+              <div
                 className="bg-blue-600 h-3 rounded-full transition-all duration-500"
                 style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
               />
             </div>
-
-            {/* สถานะการตอบคำถาม */}
             <div className="flex flex-wrap gap-2 justify-center">
               {questions.map((_, index) => (
                 <button
@@ -404,14 +394,11 @@ export default function RiskAssessment() {
               ))}
             </div>
           </div>
-
-          {/* คำถามปัจจุบัน */}
           <div className="mb-8">
             <div className="bg-white p-8 rounded-lg shadow-sm border-2 border-blue-100">
               <h2 className="text-xl font-semibold mb-6 text-gray-800">
                 {currentQ.question}
               </h2>
-              
               <div className="space-y-4">
                 {currentQ.choices.map((choice, index) => (
                   <button
@@ -419,7 +406,7 @@ export default function RiskAssessment() {
                     onClick={() => handleSelect(index)}
                     className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-200 ${
                       answers[currentQuestion] === index
-                        ? "bg-blue-100 border-blue-500 text-blue-700 font-semibold transform scale-[1.02]" 
+                        ? "bg-blue-100 border-blue-500 text-blue-700 font-semibold transform scale-[1.02]"
                         : "bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300"
                     }`}
                   >
@@ -434,8 +421,6 @@ export default function RiskAssessment() {
               </div>
             </div>
           </div>
-
-          {/* ปุ่มควบคุม */}
           <div className="flex justify-between">
             <button
               onClick={() => setCurrentQuestion(prev => Math.max(0, prev - 1))}
@@ -448,7 +433,6 @@ export default function RiskAssessment() {
             >
               ย้อนกลับ
             </button>
-
             {currentQuestion === questions.length - 1 ? (
               <button
                 onClick={handleSubmit}
@@ -458,8 +442,8 @@ export default function RiskAssessment() {
                     : "bg-orange-500 text-white hover:bg-orange-600"
                 }`}
               >
-                {answers.filter(a => a !== null).length === questions.length 
-                  ? "ดูผลการประเมิน" 
+                {answers.filter(a => a !== null).length === questions.length
+                  ? "ดูผลการประเมิน"
                   : `ตรวจสอบคำตอบ (ตอบแล้ว ${answers.filter(a => a !== null).length}/${questions.length})`
                 }
               </button>
@@ -480,7 +464,6 @@ export default function RiskAssessment() {
         </>
       ) : (
         <div className="space-y-6">
-          {/* วิธีการประมวลผล */}
           <div className="bg-white border-2 border-blue-200 p-6 rounded-lg">
             <h2 className="text-xl font-semibold mb-4 text-center text-blue-800">วิธีการประมวลผล</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
@@ -505,8 +488,6 @@ export default function RiskAssessment() {
               <span className="font-medium">รวมคะแนนทั้ง 10 ข้อและเทียบกับเกณฑ์การประเมิน</span>
             </div>
           </div>
-
-          {/* ผลการประเมิน */}
           <div className="bg-gradient-to-r from-blue-50 to-green-50 p-8 rounded-lg text-center">
             <div className="text-4xl font-bold mb-4">
               <span className="text-blue-600">{totalScore}</span>
@@ -523,15 +504,13 @@ export default function RiskAssessment() {
                 {riskResult?.advice}
               </div>
             </div>
-
-            {/* เกณฑ์การประเมิน */}
             <div className="mt-6 bg-white p-4 rounded-lg shadow-sm">
               <div className="text-lg text-gray-800 font-medium mb-3">
                 เกณฑ์การประเมิน:
               </div>
               <div className="grid grid-cols-1 md:grid-cols-5 gap-2 text-sm">
                 {riskLevelText.map((level, index) => (
-                  <div 
+                  <div
                     key={index}
                     className={`p-2 rounded border-2 text-center ${
                       totalScore >= level.min && totalScore <= level.max
@@ -550,16 +529,12 @@ export default function RiskAssessment() {
               </div>
             </div>
           </div>
-
-
-
-          {/* ปุ่มดำเนินการ */}
           <div className="flex gap-4 justify-center">
             <button
               onClick={sendToGoogleSheets}
               disabled={isSubmitting || submitted}
               className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors ${
-                submitted 
+                submitted
                   ? 'bg-green-100 text-green-700 cursor-not-allowed'
                   : 'bg-blue-600 text-white hover:bg-blue-700'
               }`}
@@ -581,7 +556,6 @@ export default function RiskAssessment() {
                 </>
               )}
             </button>
-
             <button
               onClick={fetchHistoryData}
               disabled={isLoadingHistory}
@@ -599,7 +573,6 @@ export default function RiskAssessment() {
                 </>
               )}
             </button>
-
             <button
               onClick={resetAssessment}
               className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
