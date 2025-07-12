@@ -5,15 +5,42 @@ export default function Riskassessment1() {
   const [goal, setGoal] = useState("");
   const [monthly, setMonthly] = useState("");
   const [dcaIncrease, setDcaIncrease] = useState(false);
+  const [years, setYears] = useState("");
   const [investmentType, setInvestmentType] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  function extractYears(text) {
+    const match = text.match(/(\d+)\s*ปี/);
+    return match ? parseInt(match[1], 10) : null;
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // ส่งข้อมูลจากฟอร์มนี้ไปยังหน้าถัดไปผ่าน state ของ router
+    setError("");
+
+    const years = extractYears(goal);
+    if (!goal) {
+      setError("กรุณากรอกเป้าหมาย");
+      return;
+    }
+    if (!years || parseInt(years) < 5) {
+      setError("กรุณาระบุปีอย่างน้อย 5 ปี");
+      return;
+    }
+    if (!monthly || parseInt(monthly) < 2000) {
+      setError("จำนวนเงินลงทุนขั้นต่ำ 2,000 บาท/เดือน");
+      return;
+    }
+    if (!investmentType) {
+      setError("กรุณาเลือกประเภทการลงทุน");
+      return;
+    }
+
     navigate("/Riskassessment2", {
       state: {
         goal,
+        years,
         monthly,
         dcaIncrease,
         investmentType,
@@ -22,10 +49,8 @@ export default function Riskassessment1() {
   };
 
   return (
-    // ปรับแก้ layout หลักให้กะทัดรัดขึ้น
     <div className="bg-white w-full flex flex-col justify-center py-6 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-4xl mx-auto">
-        {/* Header */}
         <div className="flex flex-col items-center mb-6">
           <div className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
             แบบประเมินเป้าหมายในการลงทุน
@@ -41,28 +66,35 @@ export default function Riskassessment1() {
           </div>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 1. เป้าหมายการลงทุน */}
+          {error && (
+            <div className="mb-4 text-red-600 font-semibold text-center">{error}</div>
+          )}
           <div>
             <label className="font-bold text-xl text-gray-800 block mb-2">
               1. เป้าหมายในการลงทุนและระยะเวลาที่คุณคิดว่าจะได้ใช้เงินเป้าหมายนั้นคืออะไร?
             </label>
-            <input
-              className="w-full border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-blue-500 focus:border-blue-500 transition"
-              type="text"
-              placeholder="เช่น DCA เพื่อซื้อบ้านภายในอีก 5 ปีข้างหน้า"
-              value={goal}
-              onChange={e => setGoal(e.target.value)}
-              required
-            />
-            <div className="text-gray-600 text-sm mt-2">
-              เช่น DCA เพื่อซื้อบ้าน, เพื่อการเกษียณในอีก 30 ปี <br />
-              <b className="text-blue-700">* แนะนำ DCA ควรลงทุนอย่างน้อย 5 ปีขึ้นไป</b>
+            <div className="flex flex-col sm:flex-row gap-2 items-center">
+              <input
+                className="flex-1 border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-blue-500 focus:border-blue-500 transition"
+                type="text"
+                placeholder="เช่น DCA เพื่อซื้อบ้าน"
+                value={goal}
+                onChange={e => setGoal(e.target.value)}
+                required
+              />
+              <input
+                className="border rounded-lg px-2 py-3 w-28 text-center"
+                type="number"
+                min={5}
+                placeholder="ปี (≥5)"
+                value={years}
+                onChange={e => setYears(e.target.value)}
+                required
+              />
+              <span className="text-gray-600 ml-2">ปี</span>
             </div>
           </div>
-
-          {/* 2. จำนวนเงินลงทุนต่อเดือน */}
           <div>
             <label className="font-bold text-xl text-gray-800 block mb-2">
               2. จำนวนเงินที่คุณสามารถลงทุนได้ต่อเดือน (บาท/เดือน)
@@ -70,7 +102,7 @@ export default function Riskassessment1() {
             <input
               className="w-full border-gray-300 rounded-lg px-4 py-3 text-base focus:ring-blue-500 focus:border-blue-500 transition"
               type="number"
-              min="0"
+              min="2000"
               step="100"
               placeholder="เช่น 3000"
               value={monthly}
@@ -94,11 +126,10 @@ export default function Riskassessment1() {
               3. คุณสนใจในการลงทุนประเภทใด
             </label>
             <div className="flex flex-col gap-3 mt-2">
-              <label className={`border-2 rounded-xl p-5 flex items-start gap-4 cursor-pointer transition ${
-                investmentType === "stock"
+              <label className={`border-2 rounded-xl p-5 flex items-start gap-4 cursor-pointer transition ${investmentType === "stock"
                   ? "border-blue-600 bg-blue-50"
                   : "border-gray-200 bg-white hover:bg-gray-50"
-              }`}>
+                }`}>
                 <input
                   type="radio"
                   name="investmentType"
@@ -115,11 +146,10 @@ export default function Riskassessment1() {
                   </div>
                 </div>
               </label>
-              <label className={`border-2 rounded-xl p-5 flex items-start gap-4 cursor-pointer transition ${
-                investmentType === "fund"
+              <label className={`border-2 rounded-xl p-5 flex items-start gap-4 cursor-pointer transition ${investmentType === "fund"
                   ? "border-blue-600 bg-blue-50"
                   : "border-gray-200 bg-white hover:bg-gray-50"
-              }`}>
+                }`}>
                 <input
                   type="radio"
                   name="investmentType"
