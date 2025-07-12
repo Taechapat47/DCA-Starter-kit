@@ -3,6 +3,7 @@ import {
   FaWallet, FaLayerGroup, FaCoins, FaLeaf, FaPiggyBank, FaChartLine, FaPercentage, FaQuestionCircle, FaEdit
 } from "react-icons/fa";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import DCAcalculator from "../component/DCAcalculate"; // <--- เพิ่ม import ตรงนี้
 
 function EditableText({ value, onChange, className = "", inputClass = "", multiline = false, ...props }) {
   const [editing, setEditing] = useState(false);
@@ -81,7 +82,7 @@ export default function Portfolio() {
   const totalInvested = groups.reduce((sum, g) => sum + Number(g.invested || 0), 0);
   const totalProfit = totalValue - totalInvested;
   const profitPercent = totalInvested > 0 ? (totalProfit / totalInvested) * 100 : 0;
-  const irr = profitPercent; // ใช้ % กำไร
+  const irr = profitPercent;
   const passive = groups.reduce((sum, g) => sum + (g.name.toLowerCase().includes('dividend') ? Number(g.value) : 0), 0) / (totalValue || 1) * 100;
   const passiveYear = Math.round(passive * totalValue / 100);
 
@@ -120,10 +121,8 @@ export default function Portfolio() {
         allocation: (g.value / total) * 100
       }))
     );
-    // eslint-disable-next-line
   }, [groups.map(g => g.value).join(",")]);
 
-  // ฟังก์ชันเพิ่มกลุ่มใหม่
   const handleAddGroup = () => {
     setGroups(groups => [
       ...groups,
@@ -329,6 +328,9 @@ export default function Portfolio() {
             </div>
           </div>
         </div>
+      </div>
+      <div className="w-full max-w-2xl my-8">
+        <DCAcalculator />
       </div>
     </div>
   );
