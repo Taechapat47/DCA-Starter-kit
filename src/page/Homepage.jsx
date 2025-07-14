@@ -59,7 +59,7 @@ export default function DcaPage() {
               <div className="text-[#22739c] font-semibold mb-1">ประเมินความเสี่ยง</div>
               <div className="text-gray-500 text-sm">ทำแบบประเมินเพื่อดูระดับความเสี่ยงที่เหมาะกับคุณ</div>
             </div>
-            <Link to="/Riskassessment">
+            <Link to="/Riskassessment1">
               <button className="mt-3 md:mt-0 bg-[#4faee6] text-white font-semibold px-6 py-2 rounded-full shadow hover:bg-[#22739c] transition-all">
                 เริ่มทำแบบประเมิน
               </button>
