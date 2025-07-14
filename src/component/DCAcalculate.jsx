@@ -1,86 +1,101 @@
 import React, { useState } from "react";
 
-export default function DCAcalculator() {
-  const [monthlyInvest, setMonthlyInvest] = useState("");
-  const [prices, setPrices] = useState(""); // กรอกราคาหุ้นคั่นด้วย , เช่น 50,55,52,60
+const frequencyMap = {
+  "Monthly": 12,
+  "Quarterly": 4,
+  "Yearly": 1,
+};
+
+export default function DCAcalculatorV2() {
+  const [years, setYears] = useState();
+  const [initial, setInitial] = useState();
+  const [expectedReturn, setExpectedReturn] = useState();
+  const [contribute, setContribute] = useState();
+  const [contributeFreq, setContributeFreq] = useState("Monthly");
+  const [growth, setGrowth] = useState();
+  const [growthFreq, setGrowthFreq] = useState("Yearly");
   const [result, setResult] = useState(null);
 
-  const handleCalculate = () => {
-    const priceList = prices
-      .split(",")
-      .map((p) => parseFloat(p.trim()))
-      .filter((n) => !isNaN(n) && n > 0);
-    if (!monthlyInvest || priceList.length === 0) {
-      setResult(null);
-      return;
+  function calculateDCA() {
+    let total = Number(initial);
+    let currentContribute = Number(contribute);
+    let periods = years * frequencyMap[contributeFreq];
+    let r = Math.pow(1 + expectedReturn / 100, 1 / frequencyMap[contributeFreq]) - 1;
+
+    for (let i = 0; i < periods; i++) {
+      total = total * (1 + r) + currentContribute;
+      // เพิ่มการโตของเงินลงทุน
+      if (
+        (growthFreq === "Yearly" && (i + 1) % frequencyMap[contributeFreq] === 0) ||
+        (growthFreq === "Monthly" && true)
+      ) {
+        if (growthFreq === "Yearly" && (i + 1) % frequencyMap[contributeFreq] === 0) {
+          currentContribute *= 1 + growth / 100;
+        } else if (growthFreq === "Monthly") {
+          currentContribute *= 1 + growth / 100 / 12;
+        }
+      }
     }
-    let totalShares = 0;
-    let totalInvestment = 0;
-
-    priceList.forEach((price) => {
-      const shares = Number(monthlyInvest) / price;
-      totalShares += shares;
-      totalInvestment += Number(monthlyInvest);
-    });
-
-    const lastPrice = priceList[priceList.length - 1];
-    const currentValue = totalShares * lastPrice;
-    const profit = currentValue - totalInvestment;
-    const profitPercent = (profit / totalInvestment) * 100;
-
-    setResult({
-      totalShares,
-      totalInvestment,
-      currentValue,
-      profit,
-      profitPercent,
-    });
-  };
+    setResult(total);
+  }
 
   return (
-    <div className="max-w-xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-8">
-      <h2 className="text-2xl font-bold mb-4 text-center text-blue-700">
-        คำนวณผลตอบแทน DCA หุ้น
-      </h2>
-      <div className="mb-4">
-        <label className="font-medium">จำนวนเงินลงทุนต่อเดือน (บาท)</label>
-        <input
-          type="number"
-          className="mt-1 p-2 border rounded w-full"
-          value={monthlyInvest}
-          onChange={(e) => setMonthlyInvest(e.target.value)}
-          min={0}
-        />
-      </div>
-      <div className="mb-4">
-        <label className="font-medium">
-          ราคาหุ้นแต่ละเดือน (คั่นด้วยเครื่องหมาย , เช่น 50,51,55,53)
-        </label>
-        <input
-          type="text"
-          className="mt-1 p-2 border rounded w-full"
-          value={prices}
-          onChange={(e) => setPrices(e.target.value)}
-        />
-        <div className="text-gray-500 text-xs mt-1">
-          * ใส่ราคาต่อเดือน เช่น 50,51,55,53 (ใส่เท่ากับจำนวนเดือนที่ลงทุน)
+    <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 mt-8 border">
+      <h2 className="text-xl font-bold text-center mb-6 text-purple-700">DCA Calculator</h2>
+      <div className="space-y-4">
+        <div>
+          <label className="block font-medium">ระยะเวลาสำหรับแผนของคุณ:</label>
+          <input type="number" value={years} min={1} max={100}
+            onChange={e => setYears(e.target.value)} className="border p-2 rounded w-32 mr-2" />
+          <span className="ml-2 text-gray-500">Years</span>
         </div>
-      </div>
-      <button
-        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition mb-4 w-full font-semibold"
-        onClick={handleCalculate}
-      >
-        คำนวณ
-      </button>
-      {result && (
-        <div className="bg-gray-50 rounded-xl p-4 mt-2 text-center">
-          <div>จำนวนหุ้นรวม: <span className="font-bold">{result.totalShares.toFixed(4)}</span> หุ้น</div>
-          <div>เงินลงทุนรวม: <span className="font-bold">{result.totalInvestment.toLocaleString()} บาท</span></div>
-          <div>มูลค่าปัจจุบัน: <span className="font-bold">{result.currentValue.toLocaleString(undefined, { maximumFractionDigits: 2 })} บาท</span></div>
-          <div>กำไร/ขาดทุน: <span className={`font-bold ${result.profit >= 0 ? "text-green-600" : "text-red-600"}`}>{result.profit.toLocaleString(undefined, { maximumFractionDigits: 2 })} บาท</span></div>
-          <div>เปอร์เซ็นต์กำไร/ขาดทุน: <span className={`font-bold ${result.profitPercent >= 0 ? "text-green-600" : "text-red-600"}`}>{result.profitPercent.toFixed(2)}%</span></div>
+        <div>
+          <label className="block font-medium">เงินต้น:</label>
+          <input type="number" value={initial} min={0}
+            onChange={e => setInitial(e.target.value)} className="border p-2 rounded w-40 mr-2" />
+          <span className="ml-2 text-gray-500">บาท</span>
         </div>
-      )}
+        <div>
+          <label className="block font-medium">ผลตอบแทนที่คาดหวังต่อปี:</label>
+          <input type="number" value={expectedReturn} min={0}
+            onChange={e => setExpectedReturn(e.target.value)} className="border p-2 rounded w-20 mr-2" />
+          <span className="ml-2 text-gray-500">%</span>
+        </div>
+        <hr className="my-4" />
+        <div>
+          <label className="block font-medium">การลงทุนเพิ่มเติม:</label>
+          <input type="number" value={contribute} min={0}
+            onChange={e => setContribute(e.target.value)} className="border p-2 rounded w-32 mr-2" />
+          <select value={contributeFreq} onChange={e => setContributeFreq(e.target.value)}
+            className="border p-2 rounded">
+            <option>Monthly</option>
+            <option>Quarterly</option>
+            <option>Yearly</option>
+          </select>
+        </div>
+        <div>
+          <label className="block font-medium">การเติบโตของการลงทุนเพิ่มเติม:</label>
+          <input type="number" value={growth} min={0}
+            onChange={e => setGrowth(e.target.value)} className="border p-2 rounded w-20 mr-2" />
+          <span className="ml-2 text-gray-500">%</span>
+          <select value={growthFreq} onChange={e => setGrowthFreq(e.target.value)}
+            className="border p-2 rounded ml-3">
+            <option value="Yearly">Year over Year</option>
+            <option value="Monthly">Month over Month</option>
+          </select>
+        </div>
+        <div className="pt-4 pb-1 text-lg font-bold text-center">
+          เงินสะสมจากแผน DCA: {" "}
+          <span className="text-purple-700">
+            ฿ {result ? result.toLocaleString(undefined, { maximumFractionDigits: 0 }) : "-"}
+          </span>
+        </div>
+        <button
+          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-xl mt-2"
+          onClick={calculateDCA}>
+          Calculate
+        </button>
+      </div>
     </div>
   );
 }

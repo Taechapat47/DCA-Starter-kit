@@ -5,7 +5,7 @@ export default function Navbar() {
   const location = useLocation();
 
   return (
-    <nav className="flex items-center justify-between bg-[#22739c] px-8 py-3 rounded-t-xl shadow-md">
+    <nav className="flex items-center justify-between bg-[#000000] px-8 py-4 rounded-t-xl shadow-md">
       <div className="flex items-center gap-2">
         <div className="bg-white/30 rounded-full p-2">
           {/* โลโก้กราฟกลม ๆ */}
