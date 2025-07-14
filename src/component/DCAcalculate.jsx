@@ -47,7 +47,7 @@ export default function DCAcalculatorV2() {
           <label className="block font-medium">ระยะเวลาสำหรับแผนของคุณ:</label>
           <input type="number" value={years} min={1} max={100}
             onChange={e => setYears(e.target.value)} className="border p-2 rounded w-32 mr-2" />
-          <span className="ml-2 text-gray-500">Years</span>
+          <span className="ml-2 text-gray-500">ปี</span>
         </div>
         <div>
           <label className="block font-medium">เงินต้น:</label>
