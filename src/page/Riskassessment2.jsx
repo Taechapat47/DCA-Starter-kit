@@ -464,7 +464,7 @@ export default function RiskAssessment() {
         </>
       ) : (
         <div className="space-y-6">
-          <div className="bg-white border-2 border-blue-200 p-6 rounded-lg">
+          {/* <div className="bg-white border-2 border-blue-200 p-6 rounded-lg">
             <h2 className="text-xl font-semibold mb-4 text-center text-blue-800">วิธีการประมวลผล</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
               <div className="text-center p-3 bg-red-50 rounded-lg">
@@ -487,7 +487,7 @@ export default function RiskAssessment() {
             <div className="text-center text-gray-700">
               <span className="font-medium">รวมคะแนนทั้ง 10 ข้อและเทียบกับเกณฑ์การประเมิน</span>
             </div>
-          </div>
+          </div> */}
           <div className="bg-gradient-to-r from-blue-50 to-green-50 p-8 rounded-lg text-center">
             <div className="text-4xl font-bold mb-4">
               <span className="text-blue-600">{totalScore}</span>
@@ -497,14 +497,14 @@ export default function RiskAssessment() {
               {riskResult?.label}
             </div>
             <div className="bg-white p-4 rounded-lg shadow-sm">
-              <div className="text-lg text-gray-800 font-medium mb-2">
+              <div className="text-2xl text-gray-800 font-medium mb-2">
                 คำแนะนำการลงทุน:
               </div>
-              <div className="text-gray-700">
+              <div className="text-gray-700 text-xl">
                 {riskResult?.advice}
               </div>
             </div>
-            <div className="mt-6 bg-white p-4 rounded-lg shadow-sm">
+            {/* <div className="mt-6 bg-white p-4 rounded-lg shadow-sm">
               <div className="text-lg text-gray-800 font-medium mb-3">
                 เกณฑ์การประเมิน:
               </div>
@@ -527,7 +527,7 @@ export default function RiskAssessment() {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="flex gap-4 justify-center">
             <button

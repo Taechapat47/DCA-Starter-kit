@@ -28,7 +28,7 @@ export default function Navbar() {
           DCA
         </Link>
         <Link
-          to="/Riskassessment"
+          to="/Riskassessment1"
           className={`pb-0.5 ${
             location.pathname === "/Riskassessment"
               ? "text-white border-b-2 border-white"
