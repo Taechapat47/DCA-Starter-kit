@@ -16,26 +16,25 @@ export default function Riskassessment1() {
   }
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    setError("");
+  e.preventDefault();
+  setError("");
 
-    const years = extractYears(goal);
-    if (!goal) {
-      setError("กรุณากรอกเป้าหมาย");
-      return;
-    }
-    if (!years || parseInt(years) < 5) {
-      setError("กรุณาระบุปีอย่างน้อย 5 ปี");
-      return;
-    }
-    if (!monthly || parseInt(monthly) < 2000) {
-      setError("จำนวนเงินลงทุนขั้นต่ำ 2,000 บาท/เดือน");
-      return;
-    }
-    if (!investmentType) {
-      setError("กรุณาเลือกประเภทการลงทุน");
-      return;
-    }
+  if (!goal) {
+    setError("กรุณากรอกเป้าหมาย");
+    return;
+  }
+  if (!years || parseInt(years) < 5) {
+    setError("กรุณาระบุปีอย่างน้อย 5 ปี");
+    return;
+  }
+  if (!monthly || parseInt(monthly) < 2000) {
+    setError("จำนวนเงินลงทุนขั้นต่ำ 2,000 บาท/เดือน");
+    return;
+  }
+  if (!investmentType) {
+    setError("กรุณาเลือกประเภทการลงทุน");
+    return;
+  }
 
     navigate("/Riskassessment2", {
       state: {
