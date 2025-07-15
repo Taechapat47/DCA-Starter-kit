@@ -280,28 +280,30 @@ export default function RiskAssessment() {
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-6">
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 mb-4">
-          <TrendingUp className="text-blue-600" size={32} />
-          <h1 className="text-3xl font-bold text-gray-800">แบบประเมินความเสี่ยงการลงทุน</h1>
+          <h1 className="text-3xl font-extrabold" style={{ color: '#1AC338' }}>แบบประเมินความเสี่ยงการลงทุน</h1>
         </div>
-        <p className="text-gray-600">ประเมินระดับความเสี่ยงที่เหมาะสมกับคุณ</p>
+        <p className="text-gray-600 font-semibold">ประเมินระดับความเสี่ยงที่เหมาะสมกับคุณ</p>
         <div className="mt-4">
+          <div className="flex rounded-full border border-gray-400 overflow-hidden text-lg">
           <button
-            onClick={fetchHistoryData}
-            disabled={isLoadingHistory}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+            disabled
           >
-            {isLoadingHistory ? (
-              <>
-                <RefreshCw className="animate-spin" size={16} />
-                กำลังโหลด...
-              </>
-            ) : (
-              <>
-                <History size={16} />
-                ดูประวัติการประเมิน
-              </>
-            )}
+            เป้าหมายในการลงทุน
           </button>
+          <button
+            className="bg-green-500 text-white font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+            disabled
+          >
+            ความเสี่ยงที่คุณรับได้
+          </button>
+          <button
+            className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+            disabled
+          >
+            DCA ที่เหมาะสมกับคุณ
+          </button>
+          </div>
         </div>
       </div>
       {showHistory && (
