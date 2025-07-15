@@ -97,11 +97,11 @@ const questions = [
 ];
 
 const riskLevelText = [
-  { min: 0, max: 14, label: "รับความเสี่ยงได้ต่ำ", advice: "ควรลงทุนในกองทุนรวมตราสารหนี้ 80% หุ้น 20%", color: "text-red-600" },
-  { min: 15, max: 21, label: "รับความเสี่ยงได้ปานกลางค่อนข้างต่ำ", advice: "ควรลงทุนในกองทุนรวมตราสารหนี้ผสมหุ้น 80% หุ้น 20%", color: "text-orange-600" },
-  { min: 22, max: 29, label: "รับความเสี่ยงได้ปานกลางค่อนข้างสูง", advice: "ควรลงทุนในกองทุนรวมตราสารหนี้ผสมหุ้น 50% หุ้น 50%", color: "text-yellow-600" },
-  { min: 30, max: 36, label: "รับความเสี่ยงได้สูง", advice: "ควรลงทุนในกองทุนรวมตราสารหนี้ผสมหุ้น 20% หุ้น 80%", color: "text-blue-600" },
-  { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "ควรลงทุนในกองทุนรวมหุ้น 20% หุ้น 80%", color: "text-green-600" }
+  { min: 0, max: 14, label: "รับความเสี่ยงได้ต่ำ", advice: "ควรลงทุนในกองทุนรวมตราสารหนี้ 80% หุ้น 20%", color: "text-red-600", recommendedReturn: 5 },
+  { min: 15, max: 21, label: "รับความเสี่ยงได้ปานกลางค่อนข้างต่ำ", advice: "ควรลงทุนในกองทุนรวมตราสารหนี้ผสมหุ้น 80% หุ้น 20%", color: "text-orange-600", recommendedReturn: 5 },
+  { min: 22, max: 29, label: "รับความเสี่ยงได้ปานกลางค่อนข้างสูง", advice: "ควรลงทุนในกองทุนรวมตราสารหนี้ผสมหุ้น 50% หุ้น 50%", color: "text-yellow-600", recommendedReturn: 8 },
+  { min: 30, max: 36, label: "รับความเสี่ยงได้สูง", advice: "ควรลงทุนในกองทุนรวมตราสารหนี้ผสมหุ้น 20% หุ้น 80%", color: "text-blue-600", recommendedReturn: 10 },
+  { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "ควรลงทุนในกองทุนรวมหุ้น 20% หุ้น 80%", color: "text-green-600", recommendedReturn: 10 }
 ];
 
 const API_BASE_URL = 'http://localhost:8000/api';
@@ -127,6 +127,7 @@ export default function RiskAssessment() {
   const [historyData, setHistoryData] = useState([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [showDcaCalculator, setShowDcaCalculator] = useState(false);
+  const [dcaInitialValues, setDcaInitialValues] = useState(null);
 
   const location = useLocation();
   const part1Data = location.state || {};
@@ -208,8 +209,16 @@ export default function RiskAssessment() {
         throw new Error('Server responded with an error!');
       }
 
+      const recommendedReturn = riskResult?.recommendedReturn
+
       setSubmitted(true);
       setShowDcaCalculator(true);
+      setDcaInitialValues({
+        years: part1Data.years,
+        initial: part1Data.monthly,
+        expectedReturn: recommendedReturn,
+        contribute: part1Data.monthly
+      });
       alert('ส่งผลการประเมินเรียบร้อยแล้ว!');
     } catch (error) {
       console.error('Error sending data:', error);
@@ -259,6 +268,7 @@ export default function RiskAssessment() {
     setSubmitted(false);
     setShowHistory(false);
     setShowDcaCalculator(false);
+    setDcaInitialValues(null);
     navigate("/Riskassessment1");
   };
   // *** จบส่วนที่เปลี่ยน ***
@@ -592,7 +602,7 @@ export default function RiskAssessment() {
       {showDcaCalculator && (
         <div className="w-full max-w-2xl my-8 mx-auto">
           <hr className="mb-8" />
-          <DCAcalculator />
+          <DCAcalculator initialValues={dcaInitialValues} />
         </div>
       )}
     </div>
