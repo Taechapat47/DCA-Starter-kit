@@ -280,33 +280,35 @@ export default function RiskAssessment() {
     );
   }
 
+  
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-lg">
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-6">
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 mb-4">
-          <TrendingUp className="text-blue-600" size={32} />
-          <h1 className="text-3xl font-bold text-gray-800">แบบประเมินความเสี่ยงการลงทุน</h1>
+          <h1 className="text-3xl font-extrabold" style={{ color: '#1AC338' }}>แบบประเมินความเสี่ยงการลงทุน</h1>
         </div>
-        <p className="text-gray-600">ประเมินระดับความเสี่ยงที่เหมาะสมกับคุณ</p>
+        <p className="text-gray-600 font-semibold">ประเมินระดับความเสี่ยงที่เหมาะสมกับคุณ</p>
         <div className="flex justify-center w-full px-4 mt-4">
-          <button
-            className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
-            disabled
-          >
-            เป้าหมายในการลงทุน
-          </button>
-          <button
-            className="bg-green-500 text-white font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
-            disabled
-          >
-            ความเสี่ยงที่คุณรับได้
-          </button>
-          <button
-            className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
-            disabled
-          >
-            DCA ที่เหมาะสมกับคุณ
-          </button>
+          <div className="flex rounded-full border border-gray-400 overflow-hidden text-lg">
+            <button
+              className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+              disabled
+            >
+              เป้าหมายในการลงทุน
+            </button>
+            <button
+              className="bg-green-500 text-white font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+              disabled
+            >
+              ความเสี่ยงที่คุณรับได้
+            </button>
+            <button
+              className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+              disabled
+            >
+              DCA ที่เหมาะสมกับคุณ
+            </button>
+          </div>
         </div>
       </div>
       {showHistory && (
