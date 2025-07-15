@@ -283,7 +283,7 @@ export default function RiskAssessment() {
           <h1 className="text-3xl font-extrabold" style={{ color: '#1AC338' }}>แบบประเมินความเสี่ยงการลงทุน</h1>
         </div>
         <p className="text-gray-600 font-semibold">ประเมินระดับความเสี่ยงที่เหมาะสมกับคุณ</p>
-        <div className="mt-4">
+        <div className="flex justify-center w-full px-4 mt-4">
           <div className="flex rounded-full border border-gray-400 overflow-hidden text-lg">
           <button
             className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
