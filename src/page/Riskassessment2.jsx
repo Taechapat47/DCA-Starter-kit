@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Send, RefreshCw, CheckCircle, TrendingUp, History, Eye } from "lucide-react";
+import DCAcalculator from "../component/DCAcalculate";
 
 const questions = [
   {
@@ -125,6 +126,7 @@ export default function RiskAssessment() {
   const [showHistory, setShowHistory] = useState(false);
   const [historyData, setHistoryData] = useState([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [showDcaCalculator, setShowDcaCalculator] = useState(false);
 
   const location = useLocation();
   const part1Data = location.state || {};
@@ -207,6 +209,7 @@ export default function RiskAssessment() {
       }
 
       setSubmitted(true);
+      setShowDcaCalculator(true);
       alert('ส่งผลการประเมินเรียบร้อยแล้ว!');
     } catch (error) {
       console.error('Error sending data:', error);
@@ -255,6 +258,7 @@ export default function RiskAssessment() {
     setAnswers(Array(questions.length).fill(null));
     setSubmitted(false);
     setShowHistory(false);
+    setShowDcaCalculator(false);
     navigate("/Riskassessment1");
   };
   // *** จบส่วนที่เปลี่ยน ***
@@ -277,30 +281,31 @@ export default function RiskAssessment() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-lg mt-6">
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl shadow-lg">
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 mb-4">
           <TrendingUp className="text-blue-600" size={32} />
           <h1 className="text-3xl font-bold text-gray-800">แบบประเมินความเสี่ยงการลงทุน</h1>
         </div>
         <p className="text-gray-600">ประเมินระดับความเสี่ยงที่เหมาะสมกับคุณ</p>
-        <div className="mt-4">
+        <div className="flex justify-center w-full px-4 mt-4">
           <button
-            onClick={fetchHistoryData}
-            disabled={isLoadingHistory}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+            disabled
           >
-            {isLoadingHistory ? (
-              <>
-                <RefreshCw className="animate-spin" size={16} />
-                กำลังโหลด...
-              </>
-            ) : (
-              <>
-                <History size={16} />
-                ดูประวัติการประเมิน
-              </>
-            )}
+            เป้าหมายในการลงทุน
+          </button>
+          <button
+            className="bg-green-500 text-white font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+            disabled
+          >
+            ความเสี่ยงที่คุณรับได้
+          </button>
+          <button
+            className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+            disabled
+          >
+            DCA ที่เหมาะสมกับคุณ
           </button>
         </div>
       </div>
@@ -580,6 +585,12 @@ export default function RiskAssessment() {
               ประเมินใหม่
             </button>
           </div>
+        </div>
+      )}
+      {showDcaCalculator && (
+        <div className="w-full max-w-2xl my-8 mx-auto">
+          <hr className="mb-8" />
+          <DCAcalculator />
         </div>
       )}
     </div>
