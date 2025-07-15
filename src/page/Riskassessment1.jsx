@@ -53,19 +53,24 @@ export default function Riskassessment1() {
         <div className="text-gray-500 mb-4 text-center text-lg md:text-xl">
           กรุณาระบุเป้าหมายและความสามารถในการลงทุนของคุณ
         </div>
-        {/* ปุ่มเลือก 2 อัน */}
-        <div className="flex rounded-full border border-green-400 overflow-hidden text-lg">
+        <div className="flex rounded-full border border-gray-400 overflow-hidden text-lg">
           <button
-            className="bg-green-500 text-white font-semibold px-6 py-2 text-xl rounded-full focus:outline-none"
+            className="bg-green-500 text-white font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
             disabled
           >
             เป้าหมายในการลงทุน
           </button>
           <button
-            className="bg-white text-green-500 font-semibold px-6 py-2 text-xl rounded-full focus:outline-none"
+            className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
             disabled
           >
-            ประเมินความเสี่ยง
+            ความเสี่ยงที่คุณรับได้
+          </button>
+          <button
+            className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+            disabled
+          >
+            DCA ที่เหมาะสมกับคุณ
           </button>
         </div>
       </div>
@@ -110,7 +115,6 @@ export default function Riskassessment1() {
                 <span className="text-gray-500 ml-2 text-lg">ปี</span>
               </div>
               <div className="text-base text-gray-500 mt-3">
-                <span className="block">เช่น DCA เพื่อซื้อบ้านภายในอีก 5 ปีข้างหน้า</span>
                 <span className="block">เช่น DCA เพื่อส่งลูกเรียน, เพื่อการเกษียณในอีก 30 ปี</span>
                 <span className="text-green-700 font-medium">
                   * แนะนำ DCA ควรลงทุนอย่างน้อย 5 ปีขึ้นไป
@@ -151,7 +155,7 @@ export default function Riskassessment1() {
               </label>
               <div className="flex flex-col md:flex-row gap-4 mt-3">
                 <label className={`flex-1 border-2 rounded-xl p-5 flex items-start gap-4 cursor-pointer transition ${investmentType === "stock"
-                  ? "border-green-500 bg-green-50"
+                  ? "border-purple-400 bg-purple-50 hover:bg-purple-100"
                   : "border-gray-200 bg-white hover:bg-gray-50"
                   }`}>
                   <input
@@ -164,14 +168,16 @@ export default function Riskassessment1() {
                     required
                   />
                   <div>
-                    <span className="font-semibold text-lg text-green-700">หุ้น : เน้นเลือกให้ถูกตัว</span>
+                    <span className="font-semibold text-lg" style={{ color: '#6C63FF' }}>
+                      หุ้น : เน้นเลือกให้ถูกตัว
+                    </span>
                     <div className="text-base text-gray-600 mt-2">
                       *เสี่ยงปานกลางค่อนข้างสูง / ผลตอบแทนคาดหวัง 5-10% ต่อปี
                     </div>
                   </div>
                 </label>
                 <label className={`flex-1 border-2 rounded-xl p-5 flex items-start gap-4 cursor-pointer transition ${investmentType === "fund"
-                  ? "border-purple-400 bg-purple-50"
+                  ? "border-purple-400 bg-purple-50 hover:bg-purple-100"
                   : "border-gray-200 bg-white hover:bg-gray-50"
                   }`}>
                   <input
@@ -184,7 +190,7 @@ export default function Riskassessment1() {
                     required
                   />
                   <div>
-                    <span className="font-semibold text-lg text-purple-700">กองทุนรวม : กระจายความเสี่ยงให้</span>
+                    <span className="font-semibold text-lg" style={{ color: '#6C63FF' }}>กองทุนรวม : กระจายความเสี่ยงให้</span>
                     <div className="text-base text-gray-600 mt-2">
                       *เสี่ยงต่ำ-ปานกลาง / ผลตอบแทนคาดหวัง 1.5-7% ต่อปี
                     </div>
