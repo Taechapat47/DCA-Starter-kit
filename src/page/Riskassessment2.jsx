@@ -18,12 +18,21 @@ const questions = [
   { question: "10. หากเงินลงทุนลดลงเหลือ 85% จะทำอย่างไร?", choices: ["ตกใจและขายทิ้ง", "กังวลใจและย้ายไปสินทรัพย์เสี่ยงต่ำ", "อดทนถือต่อ", "ยังมั่นใจ เพิ่มเงินลงทุน"] }
 ];
 
-const riskLevelText = [
-  { min: 0, max: 14, label: "รับความเสี่ยงได้ต่ำ", advice: "ควรลงทุนในกองทุนรวมตราสารหนี้ 80% หุ้น 20%", color: "text-red-600", recommendedReturn: 5 },
-  { min: 15, max: 21, label: "รับความเสี่ยงได้ปานกลางค่อนข้างต่ำ", advice: "ควรลงทุนในกองทุนรวมตราสารหนี้ผสมหุ้น 80% หุ้น 20%", color: "text-orange-600", recommendedReturn: 5 },
-  { min: 22, max: 29, label: "รับความเสี่ยงได้ปานกลางค่อนข้างสูง", advice: "ควรลงทุนในกองทุนรวมตราสารหนี้ผสมหุ้น 50% หุ้น 50%", color: "text-yellow-600", recommendedReturn: 8 },
-  { min: 30, max: 36, label: "รับความเสี่ยงได้สูง", advice: "ควรลงทุนในกองทุนรวมตราสารหนี้ผสมหุ้น 20% หุ้น 80%", color: "text-blue-600", recommendedReturn: 10 },
-  { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "ควรลงทุนในกองทุนรวมหุ้น 20% หุ้น 80%", color: "text-green-600", recommendedReturn: 10 }
+const riskLevelText_stocks = [
+  { min: 0, max: 14, label: "รับความเสี่ยงได้ต่ำ", advice: "แนะนำให้คุณเลือกซื้อหุ้นประเภท ปันผล", color: "text-red-600", recommendedReturn: 5 },
+  { min: 15, max: 21, label: "รับความเสี่ยงได้ปานกลางค่อนข้างต่ำ", advice: "แนะนำให้คุณเลือกซื้อหุ้นประเภท ปันผล", color: "text-orange-600", recommendedReturn: 5 },
+  { min: 22, max: 29, label: "รับความเสี่ยงได้ปานกลางค่อนข้างสูง", advice: "แนะนำให้คุณเลือกซื้อหุ้นประเภท คุณค่า", color: "text-yellow-600", recommendedReturn: 8 },
+  { min: 30, max: 36, label: "รับความเสี่ยงได้สูง", advice: "แนะนำให้คุณเลือกซื้อหุ้นประเภท เติบโต", color: "text-blue-600", recommendedReturn: 10 },
+  { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "แนะนำให้คุณเลือกซื้อหุ้นประเภท เติบโต", color: "text-green-600", recommendedReturn: 10 }
+];
+
+const riskLevelText_funds = [
+  { min: 0, max: 14, label: "รับความเสี่ยงได้ต่ำ", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ตลาดเงินที่ลงทุนเฉพาะในประเทศ", color: "text-red-600", recommendedReturn: 5 },
+  { min: 15, max: 21, label: "รับความเสี่ยงได้ปานกลางค่อนข้างต่ำ", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ตลาดเงิน, พันธบัตรรัฐบาล, ตราสารหนี้", color: "text-orange-600", recommendedReturn: 5 },
+  { min: 22, max: 29, label: "รับความเสี่ยงได้ปานกลางค่อนข้างสูง", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ผสม", color: "text-yellow-600", recommendedReturn: 8 },
+  { min: 30, max: 36, label: "รับความเสี่ยงได้สูง", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ตราสารทุน หรือ หมวดอุตสาหกรรม", color: "text-blue-600", recommendedReturn: 10 },
+  { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ทรัพย์สินทางเลือก", color: "text-green-600", recommendedReturn: 10 },
+  
 ];
 
 const API_BASE_URL = 'http://localhost:8000/api';
@@ -62,6 +71,10 @@ export default function RiskAssessment() {
     const id = getOrCreateAnonymousId();
     setAnonymousId(id);
   }, []);
+
+  const riskLevelText = part1Data.investmentType === 'stock'
+    ? riskLevelText_stocks
+    : riskLevelText_funds;
 
   // --- EVENT HANDLERS & LOGIC ---
   const handleSelect = (choiceIndex) => {
@@ -287,19 +300,19 @@ export default function RiskAssessment() {
   const renderResultView = () => (
     <div className="space-y-5 text-center">
       <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">ผลการประเมินความเสี่ยงของคุณ</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">ผลการประเมินความเสี่ยงของคุณ</h2>
         <div className="text-3xl font-bold mb-2">
           <span className="text-blue-600">{totalScore}</span>
-          <span className="text-gray-600 text-lg ml-1">คะแนน</span>
+          <span className="text-gray-600 text-lg ml-1"> คะแนน</span>
         </div>
-        <div className={`text-xl font-bold mb-3 ${riskResult?.color}`}>
+        <div className={`text-2xl font-bold mb-3 ${riskResult?.color}`}>
           {riskResult?.label}
         </div>
         <div className="bg-white p-4 rounded-lg shadow-sm">
-          <div className="text-base text-gray-800 font-medium mb-1">
+          <div className="text-xl text-gray-800 font-medium mb-1">
             คำแนะนำการลงทุน:
           </div>
-          <div className="text-gray-700 text-sm">
+          <div className="text-xl text-gray-700">
             {riskResult?.advice}
           </div>
         </div>
@@ -364,7 +377,7 @@ export default function RiskAssessment() {
         <div className="inline-flex items-center gap-2 mb-2">
           <h1 className="text-3xl font-extrabold" style={{ color: '#1AC338' }}>แบบประเมินความเสี่ยงการลงทุน</h1>
         </div>
-        <p className="text-gray-600 font-semibold text-ls mt-1">ประเมินระดับความเสี่ยงที่เหมาะสมกับคุณ</p>
+        <p className="text-gray-600 font-semibold text-xl mt-1">ประเมินระดับความเสี่ยงที่เหมาะสมกับคุณ</p>
         <div className="flex justify-center w-full px-4 mt-5">
           <div className="flex rounded-full border border-gray-400 overflow-hidden text-sm">
             <button className="bg-white text-black font-inter px-6 py-2 text-sm rounded-full focus:outline-none" disabled>เป้าหมายในการลงทุน</button>
