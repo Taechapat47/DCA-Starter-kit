@@ -44,30 +44,30 @@ export default function Riskassessment1() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-start text-lg items-center pt-8">
+    <div className="min-h-screen bg-white flex flex-col justify-start text-sm items-center pt-8 overflow-x-hidden">
       <div className="flex flex-col items-center mb-4">
         {/* หัวข้อ */}
-        <div className="text-green-500 font-extrabold text-3xl md:text-4xl mb-2 text-center">
+        <div className="text-green-500 font-extrabold text-xl md:text-3xl mb-2 text-center">
           แบบประเมินเป้าหมายในการลงทุน
         </div>
-        <div className="text-gray-500 mb-4 text-center text-lg md:text-xl">
+        <div className="text-gray-500 mb-4 text-center text-sm md:text-base">
           กรุณาระบุเป้าหมายและความสามารถในการลงทุนของคุณ
         </div>
-        <div className="flex rounded-full border border-gray-400 overflow-hidden text-lg">
+        <div className="flex rounded-full border border-gray-400 overflow-hidden text-sm">
           <button
-            className="bg-green-500 text-white font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+            className="bg-green-500 text-white font-inter px-6 py-2 text-sm rounded-full focus:outline-none"
             disabled
           >
             เป้าหมายในการลงทุน
           </button>
           <button
-            className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+            className="bg-white text-black font-inter px-6 py-2 text-sm rounded-full focus:outline-none"
             disabled
           >
             ความเสี่ยงที่คุณรับได้
           </button>
           <button
-            className="bg-white text-black font-inter px-6 py-2 text-xl rounded-full focus:outline-none"
+            className="bg-white text-black font-inter px-6 py-2 text-sm rounded-full focus:outline-none"
             disabled
           >
             DCA ที่เหมาะสมกับคุณ
@@ -88,15 +88,15 @@ export default function Riskassessment1() {
 
         {/* ฟอร์มด้านขวา */}
         <div className="w-full md:w-1/1 flex justify-center">
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-6 text-sm">
             {/* 1. เป้าหมาย + ปี */}
             <div>
-              <label className="font-bold text-xl text-gray-800 block mb-3">
+              <label className="font-bold text-base text-gray-800 block mb-2">
                 1. เป้าหมายในการลงทุนและระยะเวลาที่คุณคิดว่าจะได้ใช้เงินเป้าหมายนั้นคืออะไร?
               </label>
-              <div className="flex gap-3 items-center">
+              <div className="flex gap-2 items-center">
                 <input
-                  className="flex-1 border border-gray-300 rounded-lg px-4 py-3 text-lg focus:ring-green-400 focus:border-green-400 transition"
+                  className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-green-400 focus:border-green-400 transition"
                   type="text"
                   placeholder="เช่น DCA เพื่อซื้อบ้าน"
                   value={goal}
@@ -104,7 +104,7 @@ export default function Riskassessment1() {
                   required
                 />
                 <input
-                  className="border border-gray-300 rounded-lg px-3 py-3 w-24 text-center text-lg"
+                  className="border border-gray-300 rounded-lg px-3 py-2 w-20 text-center text-sm"
                   type="number"
                   min={5}
                   placeholder="ปี"
@@ -112,9 +112,9 @@ export default function Riskassessment1() {
                   onChange={e => setYears(e.target.value)}
                   required
                 />
-                <span className="text-gray-500 ml-2 text-lg">ปี</span>
+                <span className="text-gray-500 ml-1 text-sm">ปี</span>
               </div>
-              <div className="text-base text-gray-500 mt-3">
+              <div className="text-xs text-gray-500 mt-2">
                 <span className="block">เช่น DCA เพื่อส่งลูกเรียน, เพื่อการเกษียณในอีก 30 ปี</span>
                 <span className="text-green-700 font-medium">
                   * แนะนำ DCA ควรลงทุนอย่างน้อย 5 ปีขึ้นไป
@@ -124,11 +124,11 @@ export default function Riskassessment1() {
 
             {/* 2. จำนวนเงินต่อเดือน */}
             <div>
-              <label className="font-bold text-xl text-gray-800 block mb-3">
+              <label className="font-bold text-base text-gray-800 block mb-2">
                 2. จำนวนเงินที่คุณสามารถลงทุนได้ต่อเดือน (บาท/เดือน)
               </label>
               <input
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg focus:ring-green-400 focus:border-green-400 transition"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-green-400 focus:border-green-400 transition"
                 type="number"
                 min="2000"
                 step="100"
@@ -137,12 +137,12 @@ export default function Riskassessment1() {
                 onChange={e => setMonthly(e.target.value)}
                 required
               />
-              <label className="flex items-center mt-3 gap-2 text-lg text-gray-600">
+              <label className="flex items-center mt-2 gap-2 text-sm text-gray-600">
                 <input
                   type="checkbox"
                   checked={dcaIncrease}
                   onChange={e => setDcaIncrease(e.target.checked)}
-                  className="h-6 w-6 rounded border-gray-300 text-green-500 focus:ring-green-400"
+                  className="h-5 w-5 rounded border-gray-300 text-green-500 focus:ring-green-400"
                 />
                 เพิ่มเงินลงทุนในอัตราเดือนละ 10% (ถ้าสถานะทางการเงินคุณโตขึ้น)
               </label>
@@ -150,11 +150,11 @@ export default function Riskassessment1() {
 
             {/* 3. ประเภทการลงทุน */}
             <div>
-              <label className="font-bold text-xl text-gray-800 block mb-3">
+              <label className="font-bold text-base text-gray-800 block mb-2">
                 3. คุณสนใจในการลงทุนประเภทใด
               </label>
-              <div className="flex flex-col md:flex-row gap-4 mt-3">
-                <label className={`flex-1 border-2 rounded-xl p-5 flex items-start gap-4 cursor-pointer transition ${investmentType === "stock"
+              <div className="flex flex-col md:flex-row gap-3 mt-2">
+                <label className={`flex-1 border-2 rounded-xl p-4 flex items-start gap-3 cursor-pointer transition ${investmentType === "stock"
                   ? "border-purple-400 bg-purple-50 hover:bg-purple-100"
                   : "border-gray-200 bg-white hover:bg-gray-50"
                   }`}>
@@ -164,19 +164,19 @@ export default function Riskassessment1() {
                     value="stock"
                     checked={investmentType === "stock"}
                     onChange={() => setInvestmentType("stock")}
-                    className="mt-1 h-6 w-6 accent-green-600"
+                    className="mt-1 h-5 w-5 accent-green-600"
                     required
                   />
                   <div>
-                    <span className="font-semibold text-lg" style={{ color: '#6C63FF' }}>
+                    <span className="font-semibold text-base" style={{ color: '#6C63FF' }}>
                       หุ้น : เน้นเลือกให้ถูกตัว
                     </span>
-                    <div className="text-base text-gray-600 mt-2">
+                    <div className="text-xs text-gray-600 mt-1">
                       *เสี่ยงปานกลางค่อนข้างสูง / ผลตอบแทนคาดหวัง 5-10% ต่อปี
                     </div>
                   </div>
                 </label>
-                <label className={`flex-1 border-2 rounded-xl p-5 flex items-start gap-4 cursor-pointer transition ${investmentType === "fund"
+                <label className={`flex-1 border-2 rounded-xl p-4 flex items-start gap-3 cursor-pointer transition ${investmentType === "fund"
                   ? "border-purple-400 bg-purple-50 hover:bg-purple-100"
                   : "border-gray-200 bg-white hover:bg-gray-50"
                   }`}>
@@ -186,12 +186,12 @@ export default function Riskassessment1() {
                     value="fund"
                     checked={investmentType === "fund"}
                     onChange={() => setInvestmentType("fund")}
-                    className="mt-1 h-6 w-6 accent-purple-500"
+                    className="mt-1 h-5 w-5 accent-purple-500"
                     required
                   />
                   <div>
-                    <span className="font-semibold text-lg" style={{ color: '#6C63FF' }}>กองทุนรวม : กระจายความเสี่ยงให้</span>
-                    <div className="text-base text-gray-600 mt-2">
+                    <span className="font-semibold text-base" style={{ color: '#6C63FF' }}>กองทุนรวม : กระจายความเสี่ยงให้</span>
+                    <div className="text-xs text-gray-600 mt-1">
                       *เสี่ยงต่ำ-ปานกลาง / ผลตอบแทนคาดหวัง 1.5-7% ต่อปี
                     </div>
                   </div>
@@ -201,7 +201,7 @@ export default function Riskassessment1() {
 
             <button
               type="submit"
-              className={`w-full px-8 py-4 rounded-lg text-white font-semibold text-xl mt-8 transition-all 
+              className={`w-full px-8 py-3 rounded-lg text-white font-semibold text-base mt-6 transition-all 
                 ${goal && years >= 5 && monthly >= 2000 && investmentType
                   ? "bg-green-500 hover:bg-green-600 cursor-pointer"
                   : "bg-gray-300 cursor-not-allowed"
@@ -212,7 +212,7 @@ export default function Riskassessment1() {
             </button>
             {/* แสดง error */}
             {error && (
-              <div className="mt-4 text-center text-red-500 font-semibold text-lg">
+              <div className="mt-3 text-center text-red-500 font-semibold text-sm">
                 {error}
               </div>
             )}

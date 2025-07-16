@@ -5,20 +5,20 @@ export default function Navbar() {
   const location = useLocation();
 
   return (
-    <nav className="flex items-center justify-between bg-[#000000] px-8 py-4 rounded-t-xl shadow-md">
-      <div className="flex items-center gap-2">
+    <nav className="flex items-center justify-between bg-[#000000] px-8 py-2 rounded-t-xl shadow-md">
+      <div className="flex items-center gap-1">
         <div className="bg-white/30 rounded-full p-2">
           {/* โลโก้กราฟกลม ๆ */}
-          <svg width={22} height={22} fill="none" viewBox="0 0 24 24">
+          <svg width={18} height={18} fill="none" viewBox="0 0 24 24">
             <circle cx={12} cy={12} r={10} fill="#fff" opacity=".5"/>
             <rect x={8} y={10} width={2} height={6} fill="#22739c"/>
             <rect x={12} y={7} width={2} height={9} fill="#22739c"/>
             <rect x={16} y={13} width={2} height={3} fill="#22739c"/>
           </svg>
         </div>
-        <span className="text-white text-2xl font-bold ml-2">DCA Starter KIT</span>
+        <span className="text-white text-base font-bold ml-2">DCA Starter KIT</span>
       </div>
-      <div className="flex items-center gap-8 text-lg font-semibold">
+      <div className="flex items-center gap-5 text-sm font-semibold">
         <Link
           to="/"
           className={`pb-0.5 ${
