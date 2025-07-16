@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import page1 from "../assets/page1.png";
 
@@ -42,9 +42,23 @@ export default function Riskassessment1() {
       },
     });
   };
+   useEffect(() => {
+    document.body.style.overflow = "hidden";
+    document.body.style.scrollbarWidth = "none";    // Firefox
+    document.body.style["-ms-overflow-style"] = "none"; // IE/Edge
+    const styleTag = document.createElement("style");
+    styleTag.innerHTML = `body::-webkit-scrollbar { display: none !important; }`;
+    document.head.appendChild(styleTag);
 
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.scrollbarWidth = "";
+      document.body.style["-ms-overflow-style"] = "";
+      if (styleTag.parentNode) styleTag.parentNode.removeChild(styleTag);
+    };
+  }, []);
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-start text-sm items-center pt-8 overflow-x-hidden">
+    <div className="min-h-screen bg-white flex flex-col justify-start text-sm items-center pt-8 ">
       <div className="flex flex-col items-center mb-4">
         {/* หัวข้อ */}
         <div className="text-green-500 font-extrabold text-xl md:text-3xl mb-2 text-center">
