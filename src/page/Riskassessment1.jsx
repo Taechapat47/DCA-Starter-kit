@@ -164,54 +164,41 @@ export default function Riskassessment1() {
 
             {/* 3. ประเภทการลงทุน */}
             <div>
-              <label className="font-bold text-base text-gray-800 block mb-2">
-                3. คุณสนใจในการลงทุนประเภทใด
-              </label>
-              <div className="flex flex-col md:flex-row gap-3 mt-2">
-                <label className={`flex-1 border-2 rounded-xl p-4 flex items-start gap-3 cursor-pointer transition ${investmentType === "stock"
-                  ? "border-purple-400 bg-purple-50 hover:bg-purple-100"
-                  : "border-gray-200 bg-white hover:bg-gray-50"
-                  }`}>
-                  <input
-                    type="radio"
-                    name="investmentType"
-                    value="stock"
-                    checked={investmentType === "stock"}
-                    onChange={() => setInvestmentType("stock")}
-                    className="mt-1 h-5 w-5 accent-green-600"
-                    required
-                  />
-                  <div>
-                    <span className="font-semibold text-base" style={{ color: '#6C63FF' }}>
-                      หุ้น : เน้นเลือกให้ถูกตัว
-                    </span>
-                    <div className="text-xs text-gray-600 mt-1">
-                      *เสี่ยงปานกลางค่อนข้างสูง / ผลตอบแทนคาดหวัง 5-10% ต่อปี
-                    </div>
-                  </div>
+                <label className="font-bold text-base text-gray-800 block mb-2">
+                  3. คุณสนใจในการลงทุนประเภทใด
                 </label>
-                <label className={`flex-1 border-2 rounded-xl p-4 flex items-start gap-3 cursor-pointer transition ${investmentType === "fund"
-                  ? "border-purple-400 bg-purple-50 hover:bg-purple-100"
-                  : "border-gray-200 bg-white hover:bg-gray-50"
-                  }`}>
-                  <input
-                    type="radio"
-                    name="investmentType"
-                    value="fund"
-                    checked={investmentType === "fund"}
-                    onChange={() => setInvestmentType("fund")}
-                    className="mt-1 h-5 w-5 accent-purple-500"
-                    required
-                  />
-                  <div>
-                    <span className="font-semibold text-base" style={{ color: '#6C63FF' }}>กองทุนรวม : กระจายความเสี่ยงให้</span>
-                    <div className="text-xs text-gray-600 mt-1">
-                      *เสี่ยงต่ำ-ปานกลาง / ผลตอบแทนคาดหวัง 1.5-7% ต่อปี
-                    </div>
-                  </div>
-                </label>
+                <div className="flex flex-col sm:flex-row gap-4 mt-2">
+                  {["stock", "fund"].map((type) => (
+                    <label 
+                      key={type}
+                      className={`flex-1 border-2 rounded-xl p-4 flex items-start gap-4 cursor-pointer transition-all duration-200 ${investmentType === type
+                        ? "border-purple-500 bg-purple-50 shadow-md scale-105"
+                        : "border-gray-200 bg-white hover:bg-gray-50 hover:border-gray-300"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="investmentType"
+                        value={type}
+                        checked={investmentType === type}
+                        onChange={() => setInvestmentType(type)}
+                        className="mt-1 h-5 w-5 flex-shrink-0 accent-purple-600"
+                      />
+                      <div>
+                        <span className="font-semibold text-base text-purple-700">
+                          {type === 'stock' ? 'หุ้น: เน้นเลือกให้ถูกตัว' : 'กองทุนรวม: กระจายความเสี่ยงให้'}
+                        </span>
+                        <div className="text-xs text-gray-600 mt-1">
+                          {type === 'stock' 
+                            ? '*เสี่ยงปานกลางค่อนข้างสูง / ผลตอบแทนคาดหวัง 5-10% ต่อปี'
+                            : '*เสี่ยงต่ำ-ปานกลาง / ผลตอบแทนคาดหวัง 1.5-7% ต่อปี'
+                          }
+                        </div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
 
             <button
               type="submit"
