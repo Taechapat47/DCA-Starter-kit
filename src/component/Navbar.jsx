@@ -55,7 +55,7 @@ export default function Navbar() {
               : "text-white/80"
           }`}
         >
-          MarketCap
+          แสกนหาหุ้นพื้นฐานดี
         </Link>
       </div>
     </nav>
