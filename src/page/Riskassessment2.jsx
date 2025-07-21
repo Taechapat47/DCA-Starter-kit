@@ -32,7 +32,7 @@ const riskLevelText_funds = [
   { min: 22, max: 29, label: "รับความเสี่ยงได้ปานกลางค่อนข้างสูง", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ผสม", color: "text-yellow-600", recommendedReturn: 8 },
   { min: 30, max: 36, label: "รับความเสี่ยงได้สูง", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ตราสารทุน หรือ หมวดอุตสาหกรรม", color: "text-blue-600", recommendedReturn: 10 },
   { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ทรัพย์สินทางเลือก", color: "text-green-600", recommendedReturn: 10 },
-  
+
 ];
 
 const API_BASE_URL = 'http://localhost:8000/api';
@@ -65,6 +65,15 @@ export default function RiskAssessment() {
   const location = useLocation();
   const navigate = useNavigate();
   const part1Data = location.state || {};
+  const goal = location.state?.goal || "";
+
+  const goToPortfolio = () => {
+    navigate("/Portfolio", {
+      state: {
+        goal: part1Data.goal,
+      },
+    });
+  };
 
   // --- LIFECYCLE HOOKS ---
   useEffect(() => {
@@ -299,7 +308,7 @@ export default function RiskAssessment() {
 
   const renderResultView = () => (
     <div className="space-y-5 text-center">
-      <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg">
+      <div className="bg-gradient-to-r from-blue-200 to-green-200 p-6 rounded-lg">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">ผลการประเมินความเสี่ยงของคุณ</h2>
         <div className="text-3xl font-bold mb-2">
           <span className="text-blue-600">{totalScore}</span>
@@ -338,6 +347,20 @@ export default function RiskAssessment() {
         >
           ประเมินใหม่
         </button>
+        {submitted && (
+          <button
+            onClick={() => {
+              navigate("/Portfolio", {
+                state: {
+                  goal: part1Data.goal,
+                }
+              });
+            }}
+            className="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold"
+          >
+            ไปหน้า Portfolio
+          </button>
+        )}
       </div>
     </div>
   );
