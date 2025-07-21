@@ -42,6 +42,7 @@ export default function Riskassessment1() {
       },
     });
   };
+
    useEffect(() => {
     document.body.style.overflow = "hidden";
     document.body.style.scrollbarWidth = "none";    // Firefox
