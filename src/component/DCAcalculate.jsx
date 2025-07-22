@@ -31,7 +31,23 @@ export default function DCAcalculator({ initialValues }) {
     const allValuesPresent = years && initial && expectedReturn && contribute;
 
     if (allValuesPresent) {
-      
+      let total = Number(initial);
+      let currentContribute = Number(contribute);
+      const periods = Number(years) * frequencyMap["Monthly"]; // สมมติว่าลงทุนเป็นรายเดือนเสมอ
+      const r = Math.pow(1 + Number(expectedReturn) / 100, 1 / 12) - 1;
+
+      // ตรวจสอบค่าเบื้องต้นเพื่อป้องกันผลลัพธ์ที่ผิดพลาด (NaN)
+      if (isNaN(total) || isNaN(currentContribute) || isNaN(periods) || isNaN(r)) {
+          setResult(null);
+          return;
+      }
+
+      for (let i = 0; i < periods; i++) {
+        total = total * (1 + r) + currentContribute;
+      }
+      setResult(total);
+    } else {
+      setResult(null); // รีเซ็ตผลลัพธ์ถ้ามีช่องใดยังไม่ได้กรอก
     }
   }, [years, initial, expectedReturn, contribute]); // ทำงานเมื่อค่าเหล่านี้เปลี่ยน
 
@@ -40,7 +56,7 @@ export default function DCAcalculator({ initialValues }) {
       <h2 className="text-2xl font-bold text-center mb-6 text-green-600">DCA ที่เหมาะสมกับคุณ</h2>
       <div className="space-y-4">
         <div>
-             <label className="block font-medium text-gray-700">ระยะเวลาสำหรับแผนของคุณ:</label>
+          <label className="block font-medium text-gray-700">ระยะเวลาสำหรับแผนของคุณ:</label>
           <div className="flex items-center mt-1">
             <input type="number" value={years}
               readOnly
