@@ -38,16 +38,6 @@ export default function Navbar() {
           ประเมินความเสี่ยง
         </Link>
         <Link
-          to="/portfolio"
-          className={`pb-0.5 ${
-            location.pathname === "/portfolio"
-              ? "text-white border-b-2 border-white"
-              : "text-white/80"
-          }`}
-        >
-          พอร์ตฟอลิโอ
-        </Link>
-        <Link
           to="/marketcap"
           className={`pb-0.5 ${
             location.pathname === "/marketcap"
