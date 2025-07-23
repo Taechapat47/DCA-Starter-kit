@@ -436,7 +436,7 @@ export default function RiskAssessment() {
           <div className="flex rounded-full border border-gray-400 overflow-hidden text-sm">
             <button className="bg-white text-black font-inter px-6 py-2 text-sm rounded-full focus:outline-none" disabled>เป้าหมายในการลงทุน</button>
             <button
-              className={`px-6 py-2 text-sm rounded-full focus:outline-none font-inter ${submitted || showResult ? "bg-white text-black" : "bg-green-500 text-white"
+              className={`px-6 py-2 text-sm rounded-full focus:outline-none font-inter ${submitted ? "bg-white text-black" : "bg-green-500 text-white"
                 }`}
               disabled
             >

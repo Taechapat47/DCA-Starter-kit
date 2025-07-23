@@ -6,17 +6,13 @@ const frequencyMap = {
   "Yearly": 1,
 };
 
-// คอมโพเนนต์จะรับ props ที่ชื่อ initialValues
 export default function DCAcalculator({ initialValues }) {
-  // กำหนด State เริ่มต้นเป็นค่าว่าง
   const [years, setYears] = useState("");
   const [initial, setInitial] = useState("");
   const [expectedReturn, setExpectedReturn] = useState("");
   const [contribute, setContribute] = useState("");
   const [result, setResult] = useState(null);
 
-  // ใช้ useEffect เพื่ออัปเดต state เมื่อได้รับ props initialValues ใหม่
-  // ทำให้ค่าในเครื่องคิดเลขเปลี่ยนตามผลประเมินล่าสุดเสมอ
   useEffect(() => {
     if (initialValues) {
       setYears(initialValues.years || "");
@@ -26,86 +22,110 @@ export default function DCAcalculator({ initialValues }) {
     }
   }, [initialValues]);
 
-  // useEffect สำหรับคำนวณอัตโนมัติเมื่อค่าเปลี่ยน
   useEffect(() => {
     const allValuesPresent = years && initial && expectedReturn && contribute;
-
     if (allValuesPresent) {
       let total = Number(initial);
       let currentContribute = Number(contribute);
-      const periods = Number(years) * frequencyMap["Monthly"]; // สมมติว่าลงทุนเป็นรายเดือนเสมอ
+      const periods = Number(years) * frequencyMap["Monthly"];
       const r = Math.pow(1 + Number(expectedReturn) / 100, 1 / 12) - 1;
-
-      // ตรวจสอบค่าเบื้องต้นเพื่อป้องกันผลลัพธ์ที่ผิดพลาด (NaN)
       if (isNaN(total) || isNaN(currentContribute) || isNaN(periods) || isNaN(r)) {
-          setResult(null);
-          return;
+        setResult(null);
+        return;
       }
-
       for (let i = 0; i < periods; i++) {
         total = total * (1 + r) + currentContribute;
       }
       setResult(total);
     } else {
-      setResult(null); // รีเซ็ตผลลัพธ์ถ้ามีช่องใดยังไม่ได้กรอก
+      setResult(null);
     }
-  }, [years, initial, expectedReturn, contribute]); // ทำงานเมื่อค่าเหล่านี้เปลี่ยน
+  }, [years, initial, expectedReturn, contribute]);
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 mt-8 border">
-      <h2 className="text-2xl font-bold text-center mb-6 text-green-600">DCA ที่เหมาะสมกับคุณ</h2>
-      <div className="space-y-4">
+    <div
+      className="w-full max-w-2xl mx-auto rounded-2xl shadow-lg p-6"
+      style={{
+        background: "linear-gradient(120deg, #C3FFFA, #BCE6E2, #A7CCC9)",
+        border: "none",
+      }}
+    >
+      <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+        {/* ระยะเวลา */}
         <div>
-          <label className="block font-medium text-gray-700">ระยะเวลาสำหรับแผนของคุณ:</label>
-          <div className="flex items-center mt-1">
-            <input type="number" value={years}
+          <label className="block font-semi-bold text-lg mb-2" style={{ color: "#9747FF" }}>
+            ระยะเวลาสำหรับแผนของคุณ:
+          </label>
+          <div className="flex items-center bg-white rounded-xl shadow px-4 py-2">
+            <input
+              type="number"
+              value={years}
               readOnly
-              className="border p-2 rounded w-full mr-2 bg-gray-100 cursor-not-allowed"
+              className="w-full outline-none bg-white text-lg font-medium"
+              style={{ border: "none", boxShadow: "none" }}
             />
-            <span className="text-gray-500">ปี</span>
+            <span className="ml-2 text-gray-600 text-base">ปี</span>
           </div>
         </div>
+        {/* เงินต้น */}
         <div>
-          <label className="block font-medium text-gray-700">เงินต้น:</label>
-          <div className="flex items-center mt-1">
-            <input type="number" value={initial}
+          <label className="block font-bold text-lg mb-2" style={{ color: "#9747FF" }}>เงินต้น:</label>
+          <div className="flex items-center bg-white rounded-xl shadow px-4 py-2">
+            <input
+              type="number"
+              value={initial}
               readOnly
-              className="border p-2 rounded w-full mr-2 bg-gray-100 cursor-not-allowed"
+              className="w-full outline-none bg-white text-lg font-medium"
+              style={{ border: "none", boxShadow: "none" }}
             />
-            <span className="text-gray-500">บาท</span>
+            <span className="ml-2 text-gray-600 text-base">บาท</span>
           </div>
         </div>
+        {/* ผลตอบแทนที่คาดหวัง */}
         <div>
-          <label className="block font-medium text-gray-700">ผลตอบแทนที่คาดหวังต่อปี:</label>
-           <div className="flex items-center mt-1">
-            <input type="number" value={expectedReturn}
+          <label className="block font-bold text-lg mb-2" style={{ color: "#9747FF" }}>
+            ผลตอบแทนคาดหวังต่อปี:
+          </label>
+          <div className="flex items-center bg-white rounded-xl shadow px-4 py-2">
+            <input
+              type="number"
+              value={expectedReturn}
               readOnly
-              className="border p-2 rounded w-full mr-2 bg-gray-100 cursor-not-allowed"
+              className="w-full outline-none bg-white text-lg font-medium"
+              style={{ border: "none", boxShadow: "none" }}
             />
-            <span className="text-gray-500">%</span>
+            <span className="ml-2 text-gray-600 text-base">%</span>
           </div>
         </div>
-        <hr className="my-4" />
+        {/* การลงทุนเพิ่มเติม */}
         <div>
-          <label className="block font-medium text-gray-700">การลงทุนเพิ่มเติม:</label>
-           <div className="flex items-center mt-1">
-            <input type="number" value={contribute}
+          <label className="block font-bold text-lg mb-2" style={{ color: "#9747FF" }}>
+            การลงทุนเพิ่มเติม:
+          </label>
+          <div className="flex items-center bg-white rounded-xl shadow px-4 py-2">
+            <input
+              type="number"
+              value={contribute}
               readOnly
-              className="border p-2 rounded w-full mr-2 bg-gray-100 cursor-not-allowed"
+              className="w-full outline-none bg-white text-lg font-medium"
+              style={{ border: "none", boxShadow: "none" }}
             />
-            <span className="ml-2 text-gray-500 whitespace-nowrap">บาท/เดือน</span>
+            <span className="ml-2 text-gray-600 text-base whitespace-nowrap">
+              บาท/เดือน
+            </span>
           </div>
         </div>
-        
-        {result !== null && (
-            <div className="pt-4 pb-1 text-lg font-bold text-center">
-                เงินสะสมจากแผน DCA: {" "}
-                <span className="text-green-600 text-xl">
-                    ฿{result.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                </span>
-            </div>
-        )}
       </div>
+
+      {/* ผลลัพธ์ */}
+      {result !== null && (
+        <div className="pt-8 pb-2 text-xl font-bold text-center">
+          เงินสะสมจากแผน DCA:{" "}
+          <span className="text-green-600 text-2xl">
+            ฿{result.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
