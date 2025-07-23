@@ -19,21 +19,31 @@ const questions = [
 ];
 
 const riskLevelText_stocks = [
-  { min: 0, max: 14, label: "รับความเสี่ยงได้ต่ำ", advice: "แนะนำให้คุณเลือกซื้อหุ้นประเภท ปันผล", color: "text-red-600", recommendedReturn: 5 },
-  { min: 15, max: 21, label: "รับความเสี่ยงได้ปานกลางค่อนข้างต่ำ", advice: "แนะนำให้คุณเลือกซื้อหุ้นประเภท ปันผล", color: "text-orange-600", recommendedReturn: 5 },
-  { min: 22, max: 29, label: "รับความเสี่ยงได้ปานกลางค่อนข้างสูง", advice: "แนะนำให้คุณเลือกซื้อหุ้นประเภท คุณค่า", color: "text-yellow-600", recommendedReturn: 8 },
-  { min: 30, max: 36, label: "รับความเสี่ยงได้สูง", advice: "แนะนำให้คุณเลือกซื้อหุ้นประเภท เติบโต", color: "text-blue-600", recommendedReturn: 10 },
-  { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "แนะนำให้คุณเลือกซื้อหุ้นประเภท เติบโต", color: "text-green-600", recommendedReturn: 10 }
+  { min: 0, max: 14, label: "รับความเสี่ยงได้ต่ำ", advice: "หุ้นประเภท ปันผล", color: "text-red-600", recommendedReturn: 5 , riskstar: "ความเสี่ยงระดับ 1 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 5% - 9%"},
+  { min: 15, max: 21, label: "รับความเสี่ยงได้ปานกลางค่อนข้างต่ำ", advice: "หุ้นประเภท ปันผล", color: "text-orange-600", recommendedReturn: 5 , riskstar: "ความเสี่ยงระดับ 1 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 5% - 9%"},
+  { min: 22, max: 29, label: "รับความเสี่ยงได้ปานกลางค่อนข้างสูง", advice: "หุ้นประเภท คุณค่า", color: "text-yellow-600", recommendedReturn: 8 , riskstar: "ความเสี่ยงระดับ 2 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 8% - 15%"},
+  { min: 30, max: 36, label: "รับความเสี่ยงได้สูง", advice: "หุ้นประเภท เติบโต", color: "text-green-600", recommendedReturn: 10 , riskstar: "ความเสี่ยงระดับ 3 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 10% - 25%"},
+  { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "หุ้นประเภท เติบโต", color: "text-blue-600", recommendedReturn: 10 , riskstar: "ความเสี่ยงระดับ 3 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 10% - 25%"}
 ];
 
 const riskLevelText_funds = [
-  { min: 0, max: 14, label: "รับความเสี่ยงได้ต่ำ", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ตลาดเงินที่ลงทุนเฉพาะในประเทศ", color: "text-red-600", recommendedReturn: 5 },
-  { min: 15, max: 21, label: "รับความเสี่ยงได้ปานกลางค่อนข้างต่ำ", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ตลาดเงิน, พันธบัตรรัฐบาล, ตราสารหนี้", color: "text-orange-600", recommendedReturn: 5 },
-  { min: 22, max: 29, label: "รับความเสี่ยงได้ปานกลางค่อนข้างสูง", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ผสม", color: "text-yellow-600", recommendedReturn: 8 },
-  { min: 30, max: 36, label: "รับความเสี่ยงได้สูง", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ตราสารทุน หรือ หมวดอุตสาหกรรม", color: "text-blue-600", recommendedReturn: 10 },
-  { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "แนะนำให้คุณเลือกซื้อกองทุนรวมประเภท ทรัพย์สินทางเลือก", color: "text-green-600", recommendedReturn: 10 },
+  { min: 0, max: 14, label: "รับความเสี่ยงได้ต่ำ", advice: "กองทุนรวมประเภท ตลาดเงินที่ลงทุนเฉพาะในประเทศ", color: "text-red-600", recommendedReturn: 5 },
+  { min: 15, max: 21, label: "รับความเสี่ยงได้ปานกลางค่อนข้างต่ำ", advice: "กองทุนรวมประเภท ตลาดเงิน, พันธบัตรรัฐบาล, ตราสารหนี้", color: "text-orange-600", recommendedReturn: 5 },
+  { min: 22, max: 29, label: "รับความเสี่ยงได้ปานกลางค่อนข้างสูง", advice: "กองทุนรวมประเภท ผสม", color: "text-yellow-600", recommendedReturn: 8 },
+  { min: 30, max: 36, label: "รับความเสี่ยงได้สูง", advice: "กองทุนรวมประเภท ตราสารทุน หรือ หมวดอุตสาหกรรม", color: "text-green-600", recommendedReturn: 10 },
+  { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "กองทุนรวมประเภท ทรัพย์สินทางเลือก", color: "text-blue-600", recommendedReturn: 10 },
 
 ];
+
+const getRiskColor = (label) => {
+  const item = [...riskLevelText_stocks, ...riskLevelText_funds].find(i => i.label === label);
+  return item?.color || "text-gray-500";
+};
+
+const getRiskStar = (label) => {
+  const item = riskLevelText_stocks.find(i => i.label === label);
+  return item?.riskstar || "";
+};
 
 const API_BASE_URL = 'http://localhost:8000/api';
 
@@ -61,19 +71,12 @@ export default function RiskAssessment() {
   const [showDcaCalculator, setShowDcaCalculator] = useState(false);
   const [dcaInitialValues, setDcaInitialValues] = useState(null);
   const [anonymousId, setAnonymousId] = useState(null);
+  const [selectedResult, setSelectedResult] = useState(null);
 
   const location = useLocation();
   const navigate = useNavigate();
   const part1Data = location.state || {};
   const goal = location.state?.goal || "";
-
-  const goToPortfolio = () => {
-    navigate("/Portfolio", {
-      state: {
-        goal: part1Data.goal,
-      },
-    });
-  };
 
   // --- LIFECYCLE HOOKS ---
   useEffect(() => {
@@ -118,6 +121,7 @@ export default function RiskAssessment() {
     setShowHistory(false);
     setShowDcaCalculator(false);
     setDcaInitialValues(null);
+    setSelectedResult(null);
     navigate("/Riskassessment1");
   };
 
@@ -146,7 +150,7 @@ export default function RiskAssessment() {
         riskLevel: riskResult?.label,
         riskAdvice: riskResult?.advice,
         answers: JSON.stringify(answersDetail),
-        ...part1Data
+        ...part1Data // ส่ง part1Data ไปด้วย
       };
 
       const response = await fetch(`${API_BASE_URL}/assessment`, {
@@ -188,12 +192,30 @@ export default function RiskAssessment() {
         throw new Error('Failed to fetch history from server.');
       }
       const data = await response.json();
-      const processedData = data.slice(1).map(row => ({
-        date: row[1],
-        score: parseInt(row[2], 10),
-        riskLevel: row[3],
-        advice: row[4]
-      })).reverse();
+      const processedData = data.slice(1).map(row => {
+        // ต้องตรวจสอบว่าคอลัมน์เหล่านี้มีข้อมูลอยู่จริงหรือไม่
+        // และปรับ index ให้ตรงกับตำแหน่งใน Google Sheet ของคุณ
+        const investmentType = row[10]; // คอลัมน์ K
+        const years = parseFloat(row[7]); // คอลัมน์ H
+        const monthly = parseFloat(row[8]); // คอลัมน์ I
+
+        // Determine the correct riskLevelText array based on investmentType
+        const selectedRiskLevelText = investmentType === 'stock' ? riskLevelText_stocks : riskLevelText_funds;
+
+        // Find the recommendedReturn for the historical risk level
+        const historicalRiskResult = selectedRiskLevelText.find(rl => rl.label === row[3]); // riskLevel อยู่ที่คอลัมน์ D (index 3)
+
+        return {
+          date: row[1],
+          score: parseInt(row[2], 10),
+          riskLevel: row[3],
+          advice: row[4],
+          investmentType: investmentType,
+          years: years,
+          monthly: monthly,
+          expectedReturn: historicalRiskResult?.recommendedReturn
+        };
+      }).reverse();
       setHistoryData(processedData);
       setShowHistory(true);
     } catch (error) {
@@ -205,7 +227,8 @@ export default function RiskAssessment() {
   };
 
   const totalScore = answers.reduce((sum, ans) => (ans !== null ? sum + (ans + 1) : sum), 0);
-  const riskResult = riskLevelText.find(rl => totalScore >= rl.min && totalScore <= rl.max);
+  const calculatedRiskResult = riskLevelText.find(rl => totalScore >= rl.min && totalScore <= rl.max);
+  const riskResult = selectedResult || calculatedRiskResult;
   const currentQ = questions[currentQuestion];
 
   const renderQuestionView = () => {
@@ -309,22 +332,23 @@ export default function RiskAssessment() {
   const renderResultView = () => (
     <div className="space-y-5 text-center">
       <div className="bg-gradient-to-r from-blue-200 to-green-200 p-6 rounded-lg">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">ผลการประเมินความเสี่ยงของคุณ</h2>
-        <div className="text-3xl font-bold mb-2">
-          <span className="text-blue-600">{totalScore}</span>
-          <span className="text-gray-600 text-lg ml-1"> คะแนน</span>
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">ผลการประเมินความเสี่ยงของคุณ</h2>
+        <div className={`text-2xl font-bold mb-6 ${riskResult?.color}`}>
+          คุณเป็นนักลงทุนประเภท {riskResult?.label}
         </div>
-        <div className={`text-2xl font-bold mb-3 ${riskResult?.color}`}>
-          {riskResult?.label}
+        <div className="text-3xl font-bold mb-2">
         </div>
         <div className="bg-white p-4 rounded-lg shadow-sm">
-          <div className="text-xl text-gray-800 font-medium mb-1">
-            คำแนะนำการลงทุน:
+          <div className="text-2xl text-gray-800 font-normal mb-1">
+            คำแนะนำการลงทุน :
           </div>
-          <div className="text-xl text-gray-700">
-            {riskResult?.advice}
+          <div className="text-2xl font-normal text-gray-700">
+            แนะนำให้คุณเลือกซื้อ <span style={{ color: '#6C63FF' }}>
+              {riskResult?.advice}
+            </span>
           </div>
         </div>
+        <div className="text-2xl text-gray-700 text-center pt-6">{riskResult?.riskstar}</div>
       </div>
       <div className="flex gap-3 justify-center flex-wrap">
         <button
@@ -334,6 +358,7 @@ export default function RiskAssessment() {
         >
           {isSubmitting ? <><RefreshCw className="animate-spin" size={18} /> กำลังส่ง...</> : submitted ? <><CheckCircle size={18} /> ส่งผลแล้ว</> : <><Send size={18} /> ส่งผลการประเมิน</>}
         </button>
+        {submitted && (
         <button
           onClick={fetchHistoryData}
           disabled={isLoadingHistory}
@@ -341,26 +366,13 @@ export default function RiskAssessment() {
         >
           {isLoadingHistory ? <><RefreshCw className="animate-spin" size={18} /> โหลด...</> : <><Eye size={18} /> ดูประวัติ</>}
         </button>
+        )}
         <button
           onClick={resetAssessment}
           className="px-5 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
         >
           ประเมินใหม่
         </button>
-        {submitted && (
-          <button
-            onClick={() => {
-              navigate("/Portfolio", {
-                state: {
-                  goal: part1Data.goal,
-                }
-              });
-            }}
-            className="px-5 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-semibold"
-          >
-            ไปหน้า Portfolio
-          </button>
-        )}
       </div>
     </div>
   );
@@ -373,17 +385,36 @@ export default function RiskAssessment() {
       </div>
       {historyData.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-            <div className="bg-white p-3 rounded-lg text-center"><div className="text-lg font-bold text-blue-600">{historyData.length}</div><div className="text-xs text-gray-600">ครั้งที่ประเมิน</div></div>
-            <div className="bg-white p-3 rounded-lg text-center"><div className="text-lg font-bold text-green-600">{(historyData.reduce((sum, item) => sum + item.score, 0) / historyData.length).toFixed(1)}</div><div className="text-xs text-gray-600">คะแนนเฉลี่ย</div></div>
-            <div className="bg-white p-3 rounded-lg text-center"><div className="text-base font-bold text-purple-600">{historyData[0]?.riskLevel || '-'}</div><div className="text-xs text-gray-600">ล่าสุด</div></div>
-          </div>
           <div className="space-y-2 max-h-48 overflow-y-auto">
             {historyData.slice(0, 10).map((item, index) => (
-              <div key={index} className="bg-white p-2 rounded border flex justify-between items-center">
-                <div><div className="font-medium">{item.riskLevel}</div><div className="text-xs text-gray-600">{new Date(item.date).toLocaleString()}</div></div>
-                <div className="text-right"><div className="font-bold text-base">{item.score}</div><div className="text-xs text-gray-600">คะแนน</div></div>
-              </div>
+              <button
+                key={index}
+                onClick={() => {
+                  console.log("Selected history item:", item);
+                  setShowResult(false); // ซ่อนผลลัพธ์ปัจจุบันเพื่อเตรียมแสดงผลใหม่
+                  setSelectedResult({
+                    label: item.riskLevel,
+                    advice: item.advice,
+                    color: getRiskColor(item.riskLevel),
+                    riskstar: getRiskStar(item.riskLevel),
+                  });
+
+                  // ตั้งค่า DCA initial values จากรายการประวัติที่เลือก
+                  setDcaInitialValues({
+                    years: item.years,
+                    initial: item.monthly,
+                    expectedReturn: item.expectedReturn,
+                    contribute: item.monthly
+                  });
+                  setShowDcaCalculator(true); // แสดง DCA calculator
+                  setShowResult(true); // แสดงหน้าผลลัพธ์สำหรับประวัติที่เลือก
+                  setShowHistory(false); // ซ่อนประวัติ
+                }}
+                className="bg-white p-2 rounded border flex justify-between items-center w-full hover:bg-blue-50 transition"
+              >
+                <div><div className="font-medium">{new Date(item.date).toLocaleString()}</div></div>
+                <div className="text-right"><div className="font-bold text-base">{item.riskLevel}</div></div>
+              </button>
             ))}
           </div>
         </>
@@ -404,8 +435,20 @@ export default function RiskAssessment() {
         <div className="flex justify-center w-full px-4 mt-5">
           <div className="flex rounded-full border border-gray-400 overflow-hidden text-sm">
             <button className="bg-white text-black font-inter px-6 py-2 text-sm rounded-full focus:outline-none" disabled>เป้าหมายในการลงทุน</button>
-            <button className="bg-green-500 text-white font-inter px-6 py-2 text-sm rounded-full focus:outline-none" disabled>ความเสี่ยงที่คุณรับได้</button>
-            <button className="bg-white text-black font-inter px-6 py-2 text-sm rounded-full focus:outline-none" disabled>DCA ที่เหมาะสมกับคุณ</button>
+            <button
+              className={`px-6 py-2 text-sm rounded-full focus:outline-none font-inter ${submitted || showResult ? "bg-white text-black" : "bg-green-500 text-white"
+                }`}
+              disabled
+            >
+              ความเสี่ยงที่คุณรับได้
+            </button>
+            <button
+              className={`px-6 py-2 text-sm rounded-full focus:outline-none font-inter ${submitted || showDcaCalculator ? "bg-green-500 text-white" : "bg-white text-black"
+                }`}
+              disabled
+            >
+              DCA ที่เหมาะสมกับคุณ
+            </button>
           </div>
         </div>
       </div>
