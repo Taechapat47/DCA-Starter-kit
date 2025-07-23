@@ -53,7 +53,7 @@ export default function DCAcalculator({ initialValues }) {
       <div className="grid grid-cols-2 gap-x-8 gap-y-6">
         {/* ระยะเวลา */}
         <div>
-          <label className="block font-semi-bold text-lg mb-2" style={{ color: "#9747FF" }}>
+          <label className="block font-bold text-lg mb-2" style={{ color: "#9747FF" }}>
             ระยะเวลาสำหรับแผนของคุณ:
           </label>
           <div className="flex items-center bg-white rounded-xl shadow px-4 py-2">
