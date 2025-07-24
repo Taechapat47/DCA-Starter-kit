@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Send, RefreshCw, CheckCircle, Eye } from "lucide-react";
 import DCAcalculator from "../component/DCAcalculate";
+import ICsection from "../component/ICsection";
 import q7 from "../assets/q7.png";
 
 // --- DATA CONSTANTS ---
@@ -19,11 +20,11 @@ const questions = [
 ];
 
 const riskLevelText_stocks = [
-  { min: 0, max: 14, label: "รับความเสี่ยงได้ต่ำ", advice: "หุ้นประเภท ปันผล", color: "text-red-600", recommendedReturn: 5 , riskstar: "ความเสี่ยงระดับ 1 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 5% - 9%"},
-  { min: 15, max: 21, label: "รับความเสี่ยงได้ปานกลางค่อนข้างต่ำ", advice: "หุ้นประเภท ปันผล", color: "text-orange-600", recommendedReturn: 5 , riskstar: "ความเสี่ยงระดับ 1 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 5% - 9%"},
-  { min: 22, max: 29, label: "รับความเสี่ยงได้ปานกลางค่อนข้างสูง", advice: "หุ้นประเภท คุณค่า", color: "text-yellow-600", recommendedReturn: 8 , riskstar: "ความเสี่ยงระดับ 2 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 8% - 15%"},
-  { min: 30, max: 36, label: "รับความเสี่ยงได้สูง", advice: "หุ้นประเภท เติบโต", color: "text-green-600", recommendedReturn: 10 , riskstar: "ความเสี่ยงระดับ 3 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 10% - 25%"},
-  { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "หุ้นประเภท เติบโต", color: "text-blue-600", recommendedReturn: 10 , riskstar: "ความเสี่ยงระดับ 3 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 10% - 25%"}
+  { min: 0, max: 14, label: "รับความเสี่ยงได้ต่ำ", advice: "หุ้นประเภท ปันผล", color: "text-red-600", recommendedReturn: 5, riskstar: "ความเสี่ยงระดับ 1 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 5% - 9%" },
+  { min: 15, max: 21, label: "รับความเสี่ยงได้ปานกลางค่อนข้างต่ำ", advice: "หุ้นประเภท ปันผล", color: "text-orange-600", recommendedReturn: 5, riskstar: "ความเสี่ยงระดับ 1 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 5% - 9%" },
+  { min: 22, max: 29, label: "รับความเสี่ยงได้ปานกลางค่อนข้างสูง", advice: "หุ้นประเภท คุณค่า", color: "text-yellow-600", recommendedReturn: 8, riskstar: "ความเสี่ยงระดับ 2 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 8% - 15%" },
+  { min: 30, max: 36, label: "รับความเสี่ยงได้สูง", advice: "หุ้นประเภท เติบโต", color: "text-green-600", recommendedReturn: 10, riskstar: "ความเสี่ยงระดับ 3 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 10% - 25%" },
+  { min: 37, max: 40, label: "รับความเสี่ยงได้สูงมาก", advice: "หุ้นประเภท เติบโต", color: "text-blue-600", recommendedReturn: 10, riskstar: "ความเสี่ยงระดับ 3 ดาว กำไรเฉลี่ยรายปีประมาณการณ์: 10% - 25%" }
 ];
 
 const riskLevelText_funds = [
@@ -359,13 +360,13 @@ export default function RiskAssessment() {
           {isSubmitting ? <><RefreshCw className="animate-spin" size={18} /> กำลังส่ง...</> : submitted ? <><CheckCircle size={18} /> ส่งผลแล้ว</> : <><Send size={18} /> ส่งผลการประเมิน</>}
         </button>
         {submitted && (
-        <button
-          onClick={fetchHistoryData}
-          disabled={isLoadingHistory}
-          className="flex items-center gap-2 px-5 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
-        >
-          {isLoadingHistory ? <><RefreshCw className="animate-spin" size={18} /> โหลด...</> : <><Eye size={18} /> ดูประวัติ</>}
-        </button>
+          <button
+            onClick={fetchHistoryData}
+            disabled={isLoadingHistory}
+            className="flex items-center gap-2 px-5 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+          >
+            {isLoadingHistory ? <><RefreshCw className="animate-spin" size={18} /> โหลด...</> : <><Eye size={18} /> ดูประวัติ</>}
+          </button>
         )}
         <button
           onClick={resetAssessment}
@@ -425,6 +426,7 @@ export default function RiskAssessment() {
   );
 
   return (
+    <>
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl mt-6 text-sm">
       {/* Header */}
       <div className="text-center mb-6">
@@ -462,5 +464,7 @@ export default function RiskAssessment() {
         </div>
       )}
     </div>
-  );
+    { showDcaCalculator && <ICsection /> }
+  </>
+);
 }
