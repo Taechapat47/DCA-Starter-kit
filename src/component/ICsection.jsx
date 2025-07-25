@@ -37,7 +37,7 @@ export default function ICsection() {
                     </button>
 
                     {/* ส่วนติดต่อทีมที่อัปเดตแล้ว */}
-                    <div className="w-full flex flex-col items-center justify-center mt-10">
+                    <div className="w-full flex flex-col items-center justify-center mt-10 ">
                         {/* หัวข้อ */}
                         <div className="flex items-center gap-3 mb-4">
                             <span className="flex items-center justify-center rounded-full bg-[#3A96F6] w-8 h-8">
