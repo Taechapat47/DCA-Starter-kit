@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Send, RefreshCw, CheckCircle, Eye } from "lucide-react";
 import DCAcalculator from "../component/DCAcalculate";
+import ICsection from "../component/ICsection";
 import q7 from "../assets/q7.png";
 
 // --- DATA CONSTANTS ---
@@ -689,6 +690,7 @@ export default function RiskAssessment() {
   );
 
   return (
+    <>
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-2xl mt-8 text-xl font-prompt">
       {/* Header */}
       <div className="text-center mb-6">
@@ -733,5 +735,7 @@ export default function RiskAssessment() {
         </div>
       )}
     </div>
+    { showDcaCalculator && <ICsection /> }
+    </>
   );
 }
