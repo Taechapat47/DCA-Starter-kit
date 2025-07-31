@@ -459,7 +459,7 @@ export default function DcaPage() {
                     "4px 4px  8px rgba(0,0,0,0.3) , 2px 2px 4px rgba(0,0,0,0.3)",
                 }}
               >
-                เริ่มทำแนวประเมินได้เลย!
+                เริ่มทำแบบประเมินได้เลย!
               </Link>
             </div>
           </div>
