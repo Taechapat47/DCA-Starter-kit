@@ -4,6 +4,9 @@ import { Send, RefreshCw, CheckCircle, Eye } from "lucide-react";
 import DCAcalculator from "../component/DCAcalculate";
 import ICsection from "../component/ICsection";
 import q7 from "../assets/q7.png";
+import Dividend from "../assets/Dividend.png";
+import Value from "../assets/Value.png";
+import Growth from "../assets/Growth.png";
 
 // --- DATA CONSTANTS ---
 const questions = [
@@ -44,6 +47,12 @@ const getRiskColor = (label) => {
 const getRiskStar = (label) => {
   const item = riskLevelText_stocks.find(i => i.label === label);
   return item?.riskstar || "";
+};
+
+const riskImageMap = {
+  "หุ้นประเภท ปันผล": Dividend,  // สำหรับความเสี่ยงต่ำ, ปานกลางค่อนข้างต่ำ
+  "หุ้นประเภท คุณค่า": Value,    // สำหรับความเสี่ยงปานกลางค่อนข้างสูง
+  "หุ้นประเภท เติบโต": Growth,   // สำหรับความเสี่ยงสูง และ สูงมาก
 };
 
 const API_BASE_URL = 'http://localhost:8000/api';
@@ -306,28 +315,26 @@ export default function RiskAssessment() {
               <button
                 key={index}
                 onClick={() => setCurrentQuestion(index)}
-                className={`w-7 h-7 rounded-full text-xs font-bold transition-all ${
-                  index === 3
-                    ? answers[3]?.length > 0
-                      ? 'bg-green-500 text-white'
-                      : index === currentQuestion
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                    : answers[index] !== null
+                className={`w-7 h-7 rounded-full text-xs font-bold transition-all ${index === 3
+                  ? answers[3]?.length > 0
                     ? 'bg-green-500 text-white'
                     : index === currentQuestion
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                }`}
-                title={`ข้อ ${index + 1} ${
-                  index === 3
-                    ? answers[3]?.length > 0
-                      ? '(ตอบแล้ว)'
-                      : '(ยังไม่ตอบ)'
-                    : answers[index] !== null
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                  : answers[index] !== null
+                    ? 'bg-green-500 text-white'
+                    : index === currentQuestion
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                  }`}
+                title={`ข้อ ${index + 1} ${index === 3
+                  ? answers[3]?.length > 0
                     ? '(ตอบแล้ว)'
                     : '(ยังไม่ตอบ)'
-                }`}
+                  : answers[index] !== null
+                    ? '(ตอบแล้ว)'
+                    : '(ยังไม่ตอบ)'
+                  }`}
               >
                 {index + 1}
               </button>
@@ -356,11 +363,10 @@ export default function RiskAssessment() {
                         <button
                           key={index}
                           onClick={() => handleSelect(index)}
-                          className={`w-full p-3 text-left rounded-lg border-2 transition-all duration-200 text-sm ${
-                            isSelected
-                              ? "bg-blue-50 border-blue-400 text-blue-700 font-semibold"
-                              : "bg-white border-gray-200 hover:bg-gray-100"
-                          }`}
+                          className={`w-full p-3 text-left rounded-lg border-2 transition-all duration-200 text-sm ${isSelected
+                            ? "bg-blue-50 border-blue-400 text-blue-700 font-semibold"
+                            : "bg-white border-gray-200 hover:bg-gray-100"
+                            }`}
                         >
                           <div className="flex items-center">
                             <span className="w-7 h-7 rounded-full border-2 border-current flex items-center justify-center mr-3 text-xs font-bold">
@@ -385,11 +391,10 @@ export default function RiskAssessment() {
                     <button
                       key={index}
                       onClick={() => handleSelect(index)}
-                      className={`w-full p-3 text-left rounded-lg border-2 transition-all duration-200 text-sm ${
-                        isSelected
-                          ? "bg-blue-100 border-blue-500 text-blue-700 font-semibold transform scale-[1.02]"
-                          : "bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300"
-                      }`}
+                      className={`w-full p-3 text-left rounded-lg border-2 transition-all duration-200 text-sm ${isSelected
+                        ? "bg-blue-100 border-blue-500 text-blue-700 font-semibold transform scale-[1.02]"
+                        : "bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                        }`}
                     >
                       <div className="flex items-center">
                         <span className="w-7 h-7 rounded-full border-2 border-current flex items-center justify-center mr-3 text-xs font-bold">
@@ -412,38 +417,34 @@ export default function RiskAssessment() {
           <button
             onClick={() => setCurrentQuestion((prev) => Math.max(0, prev - 1))}
             disabled={currentQuestion === 0}
-            className={`px-5 py-2 rounded-lg font-medium transition-colors text-sm ${
-              currentQuestion === 0
-                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                : "bg-gray-600 text-white hover:bg-gray-700"
-            }`}
+            className={`px-5 py-2 rounded-lg font-medium transition-colors text-sm ${currentQuestion === 0
+              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+              : "bg-gray-600 text-white hover:bg-gray-700"
+              }`}
           >
             ย้อนกลับ
           </button>
           {currentQuestion === questions.length - 1 ? (
             <button
               onClick={handleSubmit}
-              className={`px-7 py-2 rounded-lg font-medium transition-colors text-sm ${
-                answers.filter((a, i) => (i === 3 ? a.length > 0 : a !== null)).length === questions.length
-                  ? "bg-green-600 text-white hover:bg-green-700"
-                  : "bg-orange-500 text-white hover:bg-orange-600"
-              }`}
+              className={`px-7 py-2 rounded-lg font-medium transition-colors text-sm ${answers.filter((a, i) => (i === 3 ? a.length > 0 : a !== null)).length === questions.length
+                ? "bg-green-600 text-white hover:bg-green-700"
+                : "bg-orange-500 text-white hover:bg-orange-600"
+                }`}
             >
               {answers.filter((a, i) => (i === 3 ? a.length > 0 : a !== null)).length === questions.length
                 ? "ดูผลการประเมิน"
-                : `ตรวจสอบคำตอบ (ตอบแล้ว ${
-                    answers.filter((a, i) => (i === 3 ? a.length > 0 : a !== null)).length
-                  }/${questions.length})`}
+                : `ตรวจสอบคำตอบ (ตอบแล้ว ${answers.filter((a, i) => (i === 3 ? a.length > 0 : a !== null)).length
+                }/${questions.length})`}
             </button>
           ) : (
             <button
               onClick={() => setCurrentQuestion((prev) => Math.min(questions.length - 1, prev + 1))}
               disabled={currentQuestion === questions.length - 1}
-              className={`px-5 py-2 rounded-lg font-medium transition-colors text-sm ${
-                currentQuestion === questions.length - 1
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
-              }`}
+              className={`px-5 py-2 rounded-lg font-medium transition-colors text-sm ${currentQuestion === questions.length - 1
+                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+                }`}
             >
               ถัดไป
             </button>
@@ -456,12 +457,20 @@ export default function RiskAssessment() {
   const renderResultView = () => (
     <div className="space-y-5 text-center">
       <div className="bg-gradient-to-r from-blue-200 to-green-200 p-6 rounded-lg">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4">ผลการประเมินความเสี่ยงของคุณ</h2>
-        <div className={`text-2xl font-bold mb-6 ${riskResult?.color}`}>
-          คุณเป็นนักลงทุนประเภท {riskResult?.label}
-        </div>
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">จากผลการประเมินคุณคือนักลงทุนประเภท... </h2>
         <div className="text-3xl font-bold mb-2"></div>
         <div className="bg-white p-4 rounded-lg shadow-sm">
+          <div className={`text-2xl font-bold mb-6 ${riskResult?.color}`}>
+            {riskResult?.label}
+          </div>
+          <div className="flex justify-center">
+          <img
+            src={riskImageMap[riskResult?.advice]}
+            alt={riskResult?.advice}
+            className="h-[140px] w-auto"
+            draggable={false}
+          />
+          </div>
           <div className="text-2xl text-gray-800 font-normal mb-1">
             คำแนะนำการลงทุน :
           </div>
@@ -478,11 +487,10 @@ export default function RiskAssessment() {
         <button
           onClick={sendToGoogleSheets}
           disabled={isSubmitting || submitted}
-          className={`flex items-center gap-2 px-5 py-2 rounded-lg font-medium transition-colors text-sm ${
-            submitted
-              ? "bg-green-100 text-green-700 cursor-not-allowed"
-              : "bg-blue-600 text-white hover:bg-blue-700"
-          }`}
+          className={`flex items-center gap-2 px-5 py-2 rounded-lg font-medium transition-colors text-sm ${submitted
+            ? "bg-green-100 text-green-700 cursor-not-allowed"
+            : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
         >
           {isSubmitting ? (
             <>
@@ -604,19 +612,17 @@ export default function RiskAssessment() {
                 เป้าหมายในการลงทุน
               </button>
               <button
-                className={`px-6 py-2 text-sm rounded-full focus:outline-none font-inter ${
-                  submitted ? "bg-white text-black" : "bg-green-500 text-white"
-                }`}
+                className={`px-6 py-2 text-sm rounded-full focus:outline-none font-inter ${submitted ? "bg-white text-black" : "bg-green-500 text-white"
+                  }`}
                 disabled
               >
                 ความเสี่ยงที่คุณรับได้
               </button>
               <button
-                className={`px-6 py-2 text-sm rounded-full focus:outline-none font-inter ${
-                  submitted || showDcaCalculator
-                    ? "bg-green-500 text-white"
-                    : "bg-white text-black"
-                }`}
+                className={`px-6 py-2 text-sm rounded-full focus:outline-none font-inter ${submitted || showDcaCalculator
+                  ? "bg-green-500 text-white"
+                  : "bg-white text-black"
+                  }`}
                 disabled
               >
                 DCA ที่เหมาะสมกับคุณ
