@@ -1,6 +1,9 @@
 import { Link, useLocation } from "react-router-dom";
+import useNoScale from "../hooks/useNoScale";
+// --- DATA CONSTANTS ---
 
 export default function DcaPage() {
+  useNoScale();
   const location = useLocation();
   return (
     <div className="min-h-screen bg-gray-50">
@@ -175,7 +178,7 @@ export default function DcaPage() {
                   <div className="text-center">
                     <h3 className="text-black mb-8 font-prompt text-xl font-bold">
                       <span className="inline-flex text-green-600 font-prompt pl-2 text-xl">
-                      เงินต้นเติบโตมากกว่า
+                        เงินต้นเติบโตมากกว่า
                       </span>
                       การออมยิ่งได้ถึง
                       <span className="inline-flex text-green-600 font-prompt pl-2 text-xl">
@@ -226,7 +229,10 @@ export default function DcaPage() {
           <div className="flex flex-col mb-4 mr-2">
             <h1 className="text-9xl font-bold text-[#38CF53] mr-4">
               เหตุผล
-              <br /><span className="text-[135px] font-bold text-[#38CF53] pl-6">2 ข้อ</span>
+              <br />
+              <span className="text-[135px] font-bold text-[#38CF53] pl-6">
+                2 ข้อ
+              </span>
             </h1>
           </div>
           <div className="flex flex-col justify-between h-full pt-14 p-2 ">
@@ -249,17 +255,23 @@ export default function DcaPage() {
             }}
           >
             <div className="flex items-start gap-4 relative z-10 max-w-5xl">
-              <div className=" text-[#38CF53] w-12 h-12 pl-2 pt-2 flex items-center justify-center text-7xl font-bold shrink-0"
-                                style={{ textShadow: "0 4px 6px rgba(0,0,0,0.4)" }}>
+              <div
+                className=" text-[#38CF53] w-12 h-12 pl-2 pt-2 flex items-center justify-center text-7xl font-bold shrink-0"
+                style={{ textShadow: "0 4px 6px rgba(0,0,0,0.4)" }}
+              >
                 1.
               </div>
               <div className="text-black">
-                <h3 className="text-5xl font-bold  mb-2 "
-                                  style={{ textShadow: "0 4px 6px rgba(0,0,0,0.4)" }}>
+                <h3
+                  className="text-5xl font-bold  mb-2 "
+                  style={{ textShadow: "0 4px 6px rgba(0,0,0,0.4)" }}
+                >
                   ซื้อหุ้น<span className="text-purple-600">ได้ถูกลง</span>
                 </h3>
-                <h4 className="text-5xl font-bold mb-3"
-                                  style={{ textShadow: "0 4px 6px rgba(0,0,0,0.4)" }}>
+                <h4
+                  className="text-5xl font-bold mb-3"
+                  style={{ textShadow: "0 4px 6px rgba(0,0,0,0.4)" }}
+                >
                   จากการ <span className="text-green-600">"เฉลี่ยต้นทุน"</span>
                 </h4>
                 <p className="text-2xl leading-relaxed font-normal">
@@ -286,11 +298,16 @@ export default function DcaPage() {
             <div className="flex items-start gap-4 relative z-10 max-w-5xl justify-end">
               <div className="text-black">
                 <div className="text-right">
-                  <h3 className="text-5xl font-bold "
-                   style={{ textShadow: "0 4px 6px rgba(0,0,0,0.4)" }}
-                   >ไม่ต้องกังวลเรื่อง</h3>
-                  <h4 className="text-5xl font-bold mb-3"
-                   style={{ textShadow: "0 4px 6px rgba(0,0,0,0.4)" }}>
+                  <h3
+                    className="text-5xl font-bold "
+                    style={{ textShadow: "0 4px 6px rgba(0,0,0,0.4)" }}
+                  >
+                    ไม่ต้องกังวลเรื่อง
+                  </h3>
+                  <h4
+                    className="text-5xl font-bold mb-3"
+                    style={{ textShadow: "0 4px 6px rgba(0,0,0,0.4)" }}
+                  >
                     <span className="text-green-600">"การจับจังหวะตลาด"</span>
                   </h4>
                   <p className="text-xl leading-relaxed font-normal">
@@ -305,8 +322,10 @@ export default function DcaPage() {
                   </p>
                 </div>
               </div>
-              <div className=" text-[#38CF53] w-12 h-12 pr-2 pt-2 flex items-center justify-center text-7xl font-bold shrink-0 "
-              style={{ textShadow: "0 4px 6px rgba(0,0,0,0.4)" }}>
+              <div
+                className=" text-[#38CF53] w-12 h-12 pr-2 pt-2 flex items-center justify-center text-7xl font-bold shrink-0 "
+                style={{ textShadow: "0 4px 6px rgba(0,0,0,0.4)" }}
+              >
                 2.
               </div>
             </div>

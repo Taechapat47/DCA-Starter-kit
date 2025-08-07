@@ -5,7 +5,7 @@ const axios = require('axios'); // ใช้ axios เพื่อความ�
 const app = express();
 const port = 8000;
 
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxln2bF1MbpRc6MOAJh_O-K7h2Q2ren91CNaMTlhaTPHbzrk9qjK8aLA95MoEbmZFKQ/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzf_IAfh-5HCstopt7J1MLD2YZL_V5BxmekjAR3dOn1SDh2ge6L6NPUIXAaRbDmoCtg/exec';
 
 app.use(cors());
 app.use(express.json());

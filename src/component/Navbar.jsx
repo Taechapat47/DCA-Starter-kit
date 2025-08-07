@@ -41,9 +41,9 @@ export default function Navbar() {
            ประเมินความเสี่ยง
          </Link>
          <Link
-           to="/portfolio"
+           to="/StockAnalysisPage"
            className={`pb-0.5 hover:text-white transition-colors ${
-             location.pathname === "/portfolio"
+             location.pathname === "/StockAnalysisPage"
                ? "text-white border-b-2 border-white"
                : "text-white/80"
            }`}
