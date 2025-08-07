@@ -4,11 +4,14 @@ import { Send, RefreshCw, CheckCircle, Eye } from "lucide-react";
 import DCAcalculator from "../component/DCAcalculate";
 import ICsection from "../component/ICsection";
 import q7 from "../assets/q7.png";
+
 import pg1 from "../assets/pg1.png";
 import risk1 from "../assets/risk1.png";
 import risk2 from "../assets/risk2.png";
 import risk3 from "../assets/risk3.png";
 import useNoScale from "../hooks/useNoScale";
+
+
 // --- DATA CONSTANTS ---
 const questions = [
   {
@@ -221,7 +224,10 @@ const getRiskStar = (label) => {
   return item?.riskstar || "";
 };
 
+
 const API_BASE_URL = "http://localhost:8000/api";
+
+
 
 const getOrCreateAnonymousId = () => {
   const ANONYMOUS_ID_KEY = "riskAssessmentAnonymousId";
@@ -468,6 +474,8 @@ export default function RiskAssessment() {
                 />
               </div>
             ) : null}
+
+
           </div>
 
           {/* ส่วนเนื้อหาด้านขวา */}
@@ -530,9 +538,11 @@ export default function RiskAssessment() {
                     );
                   })}
                 </div>
+
                 {currentQuestion === 3 && (
                   <div className="mt-2 text-xs text-gray-500">
                     * ข้อนี้สามารถเลือกได้มากกว่า 1 ข้อ
+
                   </div>
                 )}
                 <div className="flex justify-between pt-6 border-t border-gray-100">
@@ -569,6 +579,7 @@ export default function RiskAssessment() {
                     </button>
                   ) : (
                     <button
+
                       onClick={() =>
                         setCurrentQuestion((prev) =>
                           Math.min(questions.length - 1, prev + 1)
@@ -580,6 +591,7 @@ export default function RiskAssessment() {
                           ? "bg-gray-200 text-white cursor-not-allowed"
                           : "bg-gray-400 text-white hover:bg-green-500"
                       }`}
+
                     >
                       ถัดไป
                     </button>
@@ -589,11 +601,14 @@ export default function RiskAssessment() {
             </div>
           </div>
         </div>
+
+
       </>
     );
   };
 
   const renderResultView = () => (
+
     <div className="space-y-5 text-center ">
       <div className="bg-gradient-to-r from-[#d5e5ff] to-[#d1ffe5] p-6 rounded-2xl mx-auto w-[950px] min-h-[450px]">
         <h2 className="text-3xl font-normal text-gray-800 mb-4 mt-2">
@@ -616,6 +631,7 @@ export default function RiskAssessment() {
                 />
               )}
             </div>
+
           </div>
           <div className="text-3xl text-black font-[450] m-2">
             โดยคุณสนใจลงทุนใน :{" "}
@@ -641,11 +657,10 @@ export default function RiskAssessment() {
         <button
           onClick={sendToGoogleSheets}
           disabled={isSubmitting || submitted}
-          className={`flex items-center gap-2 px-5 py-2 rounded-lg font-medium transition-colors text-sm ${
-            submitted
-              ? "bg-green-100 text-green-700 cursor-not-allowed"
-              : "bg-blue-600 text-white hover:bg-blue-700"
-          }`}
+          className={`flex items-center gap-2 px-5 py-2 rounded-lg font-medium transition-colors text-sm ${submitted
+            ? "bg-green-100 text-green-700 cursor-not-allowed"
+            : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
         >
           {isSubmitting ? (
             <>
@@ -693,13 +708,17 @@ export default function RiskAssessment() {
                 เป้าหมายในการลงทุน
               </button>
               <button
+
                 className="bg-green-500 text-white font-inter px-9 py-3 text-lg rounded-full focus:outline-none"
+
                 disabled
               >
                 ความเสี่ยงที่คุณรับได้
               </button>
               <button
+
                 className="bg-white text-black font-inter px-9 py-3 text-lg rounded-full focus:outline-none"
+
                 disabled
               >
                 DCA ที่เหมาะสมกับคุณ
