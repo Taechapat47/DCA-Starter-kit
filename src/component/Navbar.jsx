@@ -28,7 +28,7 @@ export default function Navbar() {
              location.pathname === "/" ? "text-white border-b-2 border-white" : "text-white/80"
            }`}
          >
-           DCA
+           DCA คืออะไร
          </Link>
          <Link
            to="/Riskassessment1"
@@ -48,7 +48,7 @@ export default function Navbar() {
                : "text-white/80"
            }`}
          >
-           พอร์ตฟอลิโอ
+           แสกนหาหุ้นพื้นฐานดี
          </Link>
          
        </div>
