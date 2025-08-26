@@ -1,9 +1,151 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Star, Calendar, ChevronDown } from "lucide-react";
+import { Star, Calendar, ChevronDown, RefreshCw, AlertCircle } from "lucide-react";
 
-const StockCard = ({ rank, stockData, bgColor }) => {
+// Custom Hook สำหรับดึงข้อมูลหุ้น
+const useStockData = () => {
+  const [stockData, setStockData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
+
+  const API_BASE_URL = 'http://localhost:8000';
+
+  const fetchStockData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log('🔄 Fetching stock data from API...');
+      
+      const response = await fetch(`${API_BASE_URL}/api/stocks`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        console.log(`✅ Successfully fetched ${result.count} stocks`);
+        setStockData(result.data);
+        setLastUpdated(result.lastUpdated);
+        setError(null);
+      } else {
+        throw new Error(result.message || 'Failed to fetch stock data');
+      }
+      
+    } catch (err) {
+      console.error('❌ Error fetching stock data:', err.message);
+      setError(err.message);
+      
+      // ถ้า API ไม่ทำงาน ให้ใช้ sample data
+      const sampleData = [
+        {
+          name: "NVIDIA Corporation",
+          code: "NVDA",
+          price: "171.83",
+          priceChange: "+$4.27",
+          marketCap: "$4.28T",
+          sector: "เทคโนโลยี",
+          stockType: "หุ้นเติบโต",
+          index: "S&P500",
+          Currency: "USD",
+        },
+        {
+          name: "Microsoft Corporation",
+          code: "MSFT",
+          price: "496.78",
+          priceChange: "+$3.94",
+          marketCap: "$3.72T",
+          sector: "เทคโนโลยี",
+          stockType: "หุ้นปันผล",
+          index: "S&P500",
+          Currency: "USD",
+        },
+        {
+          name: "Apple Inc.",
+          code: "AAPL",
+          price: "219.16",
+          priceChange: "-$2.48",
+          marketCap: "$3.43T",
+          sector: "เทคโนโลยี",
+          stockType: "หุ้นคุณค่า",
+          index: "S&P500",
+          Currency: "USD",
+        }
+      ];
+      
+      console.log('🔄 Using sample data as fallback');
+      setStockData(sampleData);
+      setLastUpdated(new Date().toISOString());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const refreshData = async () => {
+    try {
+      console.log('🔄 Manual refresh requested...');
+      
+      // เรียก refresh API
+      const refreshResponse = await fetch(`${API_BASE_URL}/api/stocks/refresh`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (refreshResponse.ok) {
+        console.log('✅ Refresh request sent');
+        // รอสักครู่แล้วดึงข้อมูลใหม่
+        setTimeout(() => {
+          fetchStockData();
+        }, 2000);
+      }
+      
+    } catch (err) {
+      console.error('❌ Error refreshing data:', err);
+      // ถ้า refresh ไม่ได้ ก็ดึงข้อมูลใหม่เลย
+      fetchStockData();
+    }
+  };
+
+  // Auto-fetch เมื่อ component mount
+  useEffect(() => {
+    fetchStockData();
+  }, []);
+
+  // Auto-refresh ทุก 5 นาที
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log('⏰ Auto-refresh stock data...');
+      fetchStockData();
+    }, 5 * 60 * 1000); // 5 นาที
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return { 
+    stockData, 
+    loading, 
+    error, 
+    lastUpdated,
+    refetch: fetchStockData,
+    refresh: refreshData
+  };
+};
+
+// แก้ไข StockCard - เพิ่ม onCardClick prop และลบ stockData ซ้ำ
+const StockCard = ({ rank, stockData, bgColor, onCardClick }) => {
   const chartContainerRef = useRef();
   const [chartLoaded, setChartLoaded] = useState(false);
+
+  // เพิ่มฟังก์ชันจัดการการคลิก
+  const handleCardClick = () => {
+    if (onCardClick) {
+      onCardClick(stockData); // ส่งข้อมูลหุ้นไปยัง parent component
+    }
+  };
 
   useEffect(() => {
     let chart = null;
@@ -12,7 +154,6 @@ const StockCard = ({ rank, stockData, bgColor }) => {
       try {
         console.log("Initializing chart for:", stockData.name);
 
-        // ตรวจสอบ container
         if (!chartContainerRef.current) {
           console.log("Container not ready");
           return;
@@ -22,7 +163,6 @@ const StockCard = ({ rank, stockData, bgColor }) => {
         console.log("Container width:", containerWidth);
 
         if (containerWidth === 0) {
-          // ลอง delay และลองใหม่
           setTimeout(initChart, 500);
           return;
         }
@@ -68,54 +208,41 @@ const StockCard = ({ rank, stockData, bgColor }) => {
 
         console.log("Chart created successfully");
 
-        // Generate realistic data ตามราคาจริงของหุ้นแต่ละตัว
         const currentPrice = parseFloat(stockData.price);
 
-        // สร้างข้อมูลกราฟที่สมจริงตามราคาและความผันผวนของหุ้นแต่ละตัว
         const data = Array.from({ length: 30 }, (_, i) => {
           const date = new Date("2025-08-01");
           date.setDate(date.getDate() - (29 - i));
 
-          const progress = i / 29; // 0 to 1
+          const progress = i / 29;
 
-          // คำนวณ volatility ตาม sector และราคา
-          let volatilityMultiplier = 0.02; // default 2%
-          if (stockData.sector === "เทคโนโลยี") volatilityMultiplier = 0.035; // Tech ผันผวนมากกว่า
-          if (stockData.sector === "บริการ") volatilityMultiplier = 0.015; // Healthcare เสถียรกว่า
-          if (stockData.sector === "ธุรกิจการเงิน")
-            volatilityMultiplier = 0.025;
-          if (stockData.code === "TSLA") volatilityMultiplier = 0.05; // Tesla ผันผวนมากที่สุด
-          if (stockData.code === "NVDA") volatilityMultiplier = 0.04; // NVIDIA ผันผวนสูง
+          let volatilityMultiplier = 0.02;
+          if (stockData.sector === "เทคโนโลยี") volatilityMultiplier = 0.035;
+          if (stockData.sector === "บริการ") volatilityMultiplier = 0.015;
+          if (stockData.sector === "ธุรกิจการเงิน") volatilityMultiplier = 0.025;
+          if (stockData.code === "TSLA") volatilityMultiplier = 0.05;
+          if (stockData.code === "NVDA") volatilityMultiplier = 0.04;
 
-          // สร้าง trend ตาม performance ของหุ้น
-          let trendMultiplier = 0.85; // เริ่มที่ 85% ของราคาปัจจุบัน
-          const changeValue = parseFloat(
-            stockData.priceChange.replace(/[+$-]/g, "")
-          );
+          let trendMultiplier = 0.85;
+          const changeValue = parseFloat(stockData.priceChange.replace(/[+$-]/g, ""));
           const changePercent = (changeValue / currentPrice) * 100;
 
-          // ปรับ trend ตาม performance
-          if (changePercent > 2) trendMultiplier = 0.82; // หุ้นที่ขึ้นมาก เริ่มต่ำกว่า
-          if (changePercent < 0) trendMultiplier = 0.88; // หุ้นที่ลง เริ่มสูงกว่า
+          if (changePercent > 2) trendMultiplier = 0.82;
+          if (changePercent < 0) trendMultiplier = 0.88;
 
           const startPrice = currentPrice * trendMultiplier;
           const trend = (currentPrice - startPrice) * progress;
 
-          // เพิ่ม pattern ตาม market behavior
-          const marketCycle = Math.sin(i * 0.3) * (currentPrice * 0.015); // market cycle
-          const volatility =
-            (Math.random() - 0.5) * (currentPrice * volatilityMultiplier);
-          const momentum =
-            Math.sin(i * 0.5 + progress * 2) * (currentPrice * 0.01); // momentum
+          const marketCycle = Math.sin(i * 0.3) * (currentPrice * 0.015);
+          const volatility = (Math.random() - 0.5) * (currentPrice * volatilityMultiplier);
+          const momentum = Math.sin(i * 0.5 + progress * 2) * (currentPrice * 0.01);
 
           let value = startPrice + trend + marketCycle + volatility + momentum;
 
-          // ให้จุดสุดท้าย (1 ส.ค. 2025) เป็นราคาจริงพอดี
           if (i === 29) {
             value = currentPrice;
           }
 
-          // จำกัดไม่ให้ราคาผิดปกติ
           const minPrice = currentPrice * 0.75;
           const maxPrice = currentPrice * 1.15;
           value = Math.max(minPrice, Math.min(maxPrice, value));
@@ -126,43 +253,27 @@ const StockCard = ({ rank, stockData, bgColor }) => {
           };
         });
 
-        console.log("Generated data points:", data.length);
-        console.log(
-          "Price range:",
-          Math.min(...data.map((d) => d.value)),
-          "to",
-          Math.max(...data.map((d) => d.value))
-        );
-
-        // สร้าง color ตาม performance ของหุ้น
-        const changeValue = parseFloat(
-          stockData.priceChange.replace(/[+$-]/g, "")
-        );
+        const changeValue = parseFloat(stockData.priceChange.replace(/[+$-]/g, ""));
         const isPositive = stockData.priceChange.includes("+");
-        const performanceStrength = Math.abs(changeValue / currentPrice) * 100; // % change
+        const performanceStrength = Math.abs(changeValue / currentPrice) * 100;
 
-        // เลือกสีตาม performance
         let topColor, bottomColor, lineColor;
         if (isPositive) {
           if (performanceStrength > 3) {
-            // Performance สูง - เขียวเข้ม
             topColor = "rgba(34, 197, 94, 0.6)";
             bottomColor = "rgba(34, 197, 94, 0.15)";
             lineColor = "#16a34a";
           } else {
-            // Performance ปานกลาง - เขียวอ่อน
             topColor = "rgba(34, 197, 94, 0.4)";
             bottomColor = "rgba(34, 197, 94, 0.1)";
             lineColor = "#22c55e";
           }
         } else {
-          // Performance ติดลบ - แดง
           topColor = "rgba(239, 68, 68, 0.4)";
           bottomColor = "rgba(239, 68, 68, 0.1)";
           lineColor = "#ef4444";
         }
 
-        // Add area series (กราฟหลัก) พร้อมสีตาม performance
         const areaSeries = chart.addAreaSeries({
           topColor: topColor,
           bottomColor: bottomColor,
@@ -174,7 +285,6 @@ const StockCard = ({ rank, stockData, bgColor }) => {
 
         areaSeries.setData(data);
 
-        // บังคับให้กราฟเต็มพื้นที่
         chart.timeScale().fitContent();
         chart.priceScale("right").applyOptions({
           autoScale: true,
@@ -183,7 +293,6 @@ const StockCard = ({ rank, stockData, bgColor }) => {
         console.log("Chart data set successfully");
         setChartLoaded(true);
 
-        // Resize handler
         const handleResize = () => {
           if (chart && chartContainerRef.current) {
             chart.applyOptions({
@@ -204,12 +313,9 @@ const StockCard = ({ rank, stockData, bgColor }) => {
         console.error("Chart initialization error:", error);
         setChartLoaded(false);
 
-        // Enhanced Fallback: CSS chart ที่สมจริงตามข้อมูลหุ้น
         if (chartContainerRef.current) {
           const currentPrice = parseFloat(stockData.price);
-          const changeValue = parseFloat(
-            stockData.priceChange.replace(/[+$-]/g, "")
-          );
+          const changeValue = parseFloat(stockData.priceChange.replace(/[+$-]/g, ""));
           const isPositive = stockData.priceChange.includes("+");
 
           const barColor = isPositive ? "#22c55e" : "#ef4444";
@@ -233,24 +339,19 @@ const StockCard = ({ rank, stockData, bgColor }) => {
               ${Array.from({ length: 30 }, (_, i) => {
                 const progress = i / 29;
 
-                // สร้างความสูงที่สอดคล้องกับราคา
                 let baseHeight;
                 if (isPositive) {
-                  baseHeight = 25 + progress * 40; // เริ่มต่ำแล้วขึ้น
+                  baseHeight = 25 + progress * 40;
                 } else {
-                  baseHeight = 50 - progress * 15; // เริ่มสูงแล้วลง
+                  baseHeight = 50 - progress * 15;
                 }
 
-                // เพิ่ม volatility ตาม sector
                 let volatility = 5;
                 if (stockData.sector === "เทคโนโลยี") volatility = 8;
                 if (stockData.code === "TSLA") volatility = 12;
 
                 const noise = (Math.random() - 0.5) * volatility;
-                const finalHeight = Math.max(
-                  8,
-                  Math.min(70, baseHeight + noise)
-                );
+                const finalHeight = Math.max(8, Math.min(70, baseHeight + noise));
 
                 return `<div style="
                   background: linear-gradient(to top, ${barColor}, ${barColorLight}); 
@@ -270,7 +371,6 @@ const StockCard = ({ rank, stockData, bgColor }) => {
       }
     };
 
-    // เริ่ม init หลังจาก component mount
     const timer = setTimeout(initChart, 100);
 
     return () => {
@@ -282,7 +382,10 @@ const StockCard = ({ rank, stockData, bgColor }) => {
   }, [stockData.price, stockData.name]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border p-6 hover:shadow-xl transition-shadow relative overflow-hidden">
+    <div 
+      className="bg-white rounded-2xl shadow-lg border p-6 hover:shadow-xl transition-all duration-300 relative overflow-hidden cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+      onClick={handleCardClick}
+    >
       {/* Rank Badge */}
       <div className="absolute top-0 right-0">
         <div
@@ -327,7 +430,7 @@ const StockCard = ({ rank, stockData, bgColor }) => {
             ${stockData.price}
           </span>
           <span className="bg-blue-500 text-white text-sm px-3 py-1 rounded font-medium">
-            ${stockData.Currency}
+            {stockData.Currency}
           </span>
         </div>
 
@@ -371,303 +474,61 @@ const StockCard = ({ rank, stockData, bgColor }) => {
           </div>
         )}
       </div>
+
+      {/* Hover Effect Indicator */}
+      <div className="absolute bottom-2 right-2 text-xs text-gray-400 opacity-0 hover:opacity-100 transition-opacity">
+        คลิกเพื่อดูรายละเอียด →
+      </div>
     </div>
   );
 };
 
-export const BottomSection = () => {
+// แก้ไข BottomSection - เพิ่ม onStockClick prop
+export const BottomSection = ({ onStockClick }) => {
+  const { stockData, loading, error, lastUpdated, refetch, refresh } = useStockData();
+  
   const [selectedIndex, setSelectedIndex] = useState("ทั้งหมด");
   const [selectedStockType, setSelectedStockType] = useState("ทั้งหมด");
   const [selectedSector, setSelectedSector] = useState("ทั้งหมด");
 
-  const stockData = [
-    {
-      name: "NVIDIA Corporation",
-      code: "NVDA",
-      price: "171.83",
-      priceChange: "+$4.27",
-      marketCap: "$4.28T",
-      sector: "เทคโนโลยี",
-      stockType: "หุ้นเติบโต",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Microsoft Corporation",
-      code: "MSFT",
-      price: "496.78",
-      priceChange: "+$3.94",
-      marketCap: "$3.72T",
-      sector: "เทคโนโลยี",
-      stockType: "หุ้นปันผล",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Apple Inc.",
-      code: "AAPL",
-      price: "219.16",
-      priceChange: "-$2.48",
-      marketCap: "$3.43T",
-      sector: "เทคโนโลยี",
-      stockType: "หุ้นคุ้มค่า",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Alphabet Inc. Class A",
-      code: "GOOGL",
-      price: "174.29",
-      priceChange: "+$1.92",
-      marketCap: "$2.31T",
-      sector: "บริการ",
-      stockType: "หุ้นเติบโต",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Amazon.com Inc.",
-      code: "AMZN",
-      price: "168.74",
-      priceChange: "-$4.13",
-      marketCap: "$2.01T",
-      sector: "สินค้าอุปโภคบริโภค",
-      stockType: "หุ้นเติบโต",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Meta Platforms Inc.",
-      code: "META",
-      price: "728.65",
-      priceChange: "+$18.29",
-      marketCap: "$1.87T",
-      sector: "บริการ",
-      stockType: "หุ้นเติบโต",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Taiwan Semiconductor",
-      code: "TSM",
-      price: "157.92",
-      priceChange: "-$1.25",
-      marketCap: "$1.09T",
-      sector: "เทคโนโลยี",
-      stockType: "หุ้นปันผล",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Broadcom Inc.",
-      code: "AVGO",
-      price: "1,412.45",
-      priceChange: "+$23.67",
-      marketCap: "$1.05T",
-      sector: "เทคโนโลยี",
-      stockType: "หุ้นปันผล",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Tesla Inc.",
-      code: "TSLA",
-      price: "294.18",
-      priceChange: "-$8.45",
-      marketCap: "$978.6B",
-      sector: "สินค้าอุตสาหกรรม",
-      stockType: "หุ้นเติบโต",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Berkshire Hathaway Inc. Class B",
-      code: "BRK.B",
-      price: "441.23",
-      priceChange: "+$6.78",
-      marketCap: "$992.1B",
-      sector: "ธุรกิจการเงิน",
-      stockType: "หุ้นคุ้มค่า",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Eli Lilly and Company",
-      code: "LLY",
-      price: "789.34",
-      priceChange: "-$12.45",
-      marketCap: "$743.2B",
-      sector: "บริการ",
-      stockType: "หุ้นเติบโต",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "JPMorgan Chase & Co.",
-      code: "JPM",
-      price: "204.78",
-      priceChange: "+$2.94",
-      marketCap: "$594.8B",
-      sector: "ธุรกิจการเงิน",
-      stockType: "หุ้นปันผล",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Visa Inc. Class A",
-      code: "V",
-      price: "276.43",
-      priceChange: "+$3.67",
-      marketCap: "$581.2B",
-      sector: "ธุรกิจการเงิน",
-      stockType: "หุ้นเติบโต",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "UnitedHealth Group Inc.",
-      code: "UNH",
-      price: "572.84",
-      priceChange: "-$6.78",
-      marketCap: "$533.4B",
-      sector: "บริการ",
-      stockType: "หุ้นปันผล",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Mastercard Inc. Class A",
-      code: "MA",
-      price: "478.92",
-      priceChange: "+$7.23",
-      marketCap: "$451.3B",
-      sector: "ธุรกิจการเงิน",
-      stockType: "หุ้นเติบโต",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Walmart Inc.",
-      code: "WMT",
-      price: "77.25",
-      priceChange: "-$1.48",
-      marketCap: "$639.7B",
-      sector: "สินค้าอุปโภคบริโภค",
-      stockType: "หุ้นคุ้มค่า",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "The Home Depot Inc.",
-      code: "HD",
-      price: "384.67",
-      priceChange: "+$5.92",
-      marketCap: "$386.1B",
-      sector: "สินค้าอุปโภคบริโภค",
-      stockType: "หุ้นคุ้มค่า",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Procter & Gamble Co.",
-      code: "PG",
-      price: "164.78",
-      priceChange: "-$2.13",
-      marketCap: "$392.4B",
-      sector: "สินค้าอุปโภคบริโภค",
-      stockType: "หุ้นปันผล",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "Johnson & Johnson",
-      code: "JNJ",
-      price: "153.42",
-      priceChange: "+$1.89",
-      marketCap: "$370.8B",
-      sector: "บริการ",
-      stockType: "หุ้นปันผล",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "AbbVie Inc.",
-      code: "ABBV",
-      price: "182.67",
-      priceChange: "-$3.78",
-      marketCap: "$322.9B",
-      sector: "บริการ",
-      stockType: "หุ้นปันผล",
-      index: "S&P500",
-      Currency: "USD",
-    },
-    {
-      name: "PTT Public Company Limited",
-      code: "PTT",
-      price: "38.75",
-      priceChange: "+$0.50",
-      marketCap: "$312.4B",
-      sector: "ทรัพยากร",
-      stockType: "หุ้นปันผล",
-      index: "SET100",
-      Currency: "THB",
-    },
-    {
-      name: "CP All Public Company Limited",
-      code: "CPALL",
-      price: "65.25",
-      priceChange: "+$1.25",
-      marketCap: "$285.7B",
-      sector: "สินค้าอุปโภคบริโภค",
-      stockType: "หุ้นคุ้มค่า",
-      index: "SET100",
-      Currency: "THB",
-    },
-    {
-      name: "Bangkok Bank Public Company Limited",
-      code: "BBL",
-      price: "142.50",
-      priceChange: "-$2.75",
-      marketCap: "$267.8B",
-      sector: "ธุรกิจการเงิน",
-      stockType: "หุ้นปันผล",
-      index: "SET100",
-      Currency: "THB",
-    },
-    {
-      name: "Advanced Info Service Public Company Limited",
-      code: "ADVANC",
-      price: "185.00",
-      priceChange: "+$3.50",
-      marketCap: "$234.9B",
-      sector: "บริการ",
-      stockType: "หุ้นปันผล",
-      index: "SET100",
-      Currency: "THB",
-    },
-    {
-      name: "Charoen Pokphand Foods Public Company Limited",
-      code: "CPF",
-      price: "24.75",
-      priceChange: "-$0.75",
-      marketCap: "$198.3B",
-      sector: "เกษตรและอุตสาหกรรมอาหาร",
-      stockType: "หุ้นคุ้มค่า",
-      index: "SET100",
-      Currency: "THB",
-    },
-  ];
+  // Loading state
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 pb-6">
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <div className="text-gray-600 text-lg mb-2">กำลังโหลดข้อมูลหุ้น...</div>
+          <div className="text-gray-400 text-sm">ดึงข้อมูล</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state with retry option
+  if (error && stockData.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 pb-6">
+        <div className="text-center py-12">
+          <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
+          <div className="text-red-600 text-lg mb-2">เกิดข้อผิดพลาดในการโหลดข้อมูล</div>
+          <div className="text-gray-500 text-sm mb-4">{error}</div>
+          <button 
+            onClick={refetch}
+            className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2 mx-auto"
+          >
+            <RefreshCw size={16} />
+            ลองใหม่
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   // Filter stocks based on selected options
   const filteredStocks = stockData.filter((stock) => {
-    const indexMatch =
-      selectedIndex === "ทั้งหมด" || stock.index === selectedIndex;
-
-    const stockTypeMatch =
-      selectedStockType === "ทั้งหมด" || stock.stockType === selectedStockType;
-
-    const sectorMatch =
-      selectedSector === "ทั้งหมด" || stock.sector === selectedSector;
+    const indexMatch = selectedIndex === "ทั้งหมด" || stock.index === selectedIndex;
+    const stockTypeMatch = selectedStockType === "ทั้งหมด" || stock.stockType === selectedStockType;
+    const sectorMatch = selectedSector === "ทั้งหมด" || stock.sector === selectedSector;
 
     return indexMatch && stockTypeMatch && sectorMatch;
   });
@@ -750,15 +611,32 @@ export const BottomSection = () => {
           <div className="flex items-center gap-2">
             <Star className="text-yellow-500 fill-current" size={20} />
             <h3 className="text-lg font-bold text-gray-800">
-              {filteredStocks.length} stocks {" "}
+              {filteredStocks.length} stocks{" "}
               <span className="text-sm font-normal text-gray-500">
-                Guide line by DCA Starter Kit. 
+                จากทั้งหมด {stockData.length} หุ้น 
+                {error && (
+                  <span className="text-orange-500 ml-2">
+                    (⚠️ ใช้ข้อมูลสำรอง)
+                  </span>
+                )}
               </span>
             </h3>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Calendar size={16} />
-            <span>Data as of August 1, 2025</span>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={refresh}
+              className="text-blue-500 hover:text-blue-600 text-sm flex items-center gap-1 transition-colors"
+              disabled={loading}
+            >
+              <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+              รีเฟรช
+            </button>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <Calendar size={16} />
+              <span>
+                อัปเดตล่าสุด: {lastUpdated ? new Date(lastUpdated).toLocaleString('th-TH') : 'ไม่ทราบ'}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -768,10 +646,11 @@ export const BottomSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredStocks.map((stock, index) => (
             <StockCard
-              key={stock.code}
+              key={`${stock.code}-${index}`}
               rank={index + 1}
               stockData={stock}
               bgColor="bg-teal-400"
+              onCardClick={onStockClick}
             />
           ))}
         </div>

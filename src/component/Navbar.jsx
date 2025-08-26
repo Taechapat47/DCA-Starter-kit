@@ -7,7 +7,7 @@ export default function Navbar() {
  return (
    <>
      {/* Fixed Navbar */}
-     <nav className="fixed top-0 left-0 right-0 z-50 flex h-[100px] items-center justify-between bg-[#000000] px-8 py-2 shadow-md">
+     <nav className="fixed top-0 left-0 right-0 z-50 flex h-[100px] items-center justify-between bg-[#000000] px-8 py-2 shadow-md font-prompt">
        <div className="flex items-center gap-1">
          <div className="bg-white/30 rounded-full p-2">
            {/* โลโก้กราฟกลม ๆ */}
@@ -18,10 +18,17 @@ export default function Navbar() {
              <rect x={16} y={13} width={2} height={3} fill="#22739c"/>
            </svg>
          </div>
-         <span className="text-white text-base font-bold ml-2">DCA Starter KIT</span>
+         <Link
+           to="/HowTo"
+           className={`text-white text-xl font-bold ml-2 ${
+             location.pathname === "/HowTo" ? "text-white " : "text-white/80"
+           }`}
+         >
+           DCA Starter KIT
+         </Link>
        </div>
        
-       <div className="flex items-center gap-5 text-sm font-semibold">
+       <div className="flex items-center gap-8 text-xl font-semibold">
          <Link
            to="/"
            className={`pb-0.5 hover:text-white transition-colors ${

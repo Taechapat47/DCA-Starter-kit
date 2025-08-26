@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Send, RefreshCw, CheckCircle, Eye } from "lucide-react";
+import { Send, RefreshCw, CheckCircle, Eye, RotateCcw } from "lucide-react";
 import DCAcalculator from "../component/DCAcalculate";
 import ICsection from "../component/ICsection";
 import q7 from "../assets/q7.png";
-
 import pg1 from "../assets/pg1.png";
 import risk1 from "../assets/risk1.png";
 import risk2 from "../assets/risk2.png";
 import risk3 from "../assets/risk3.png";
 import useNoScale from "../hooks/useNoScale";
-
 
 // --- DATA CONSTANTS ---
 const questions = [
@@ -224,10 +222,7 @@ const getRiskStar = (label) => {
   return item?.riskstar || "";
 };
 
-
 const API_BASE_URL = "http://localhost:8000/api";
-
-
 
 const getOrCreateAnonymousId = () => {
   const ANONYMOUS_ID_KEY = "riskAssessmentAnonymousId";
@@ -243,7 +238,6 @@ const getOrCreateAnonymousId = () => {
 export default function RiskAssessment() {
   useNoScale();
   // --- STATE MANAGEMENT ---
-  // answers[3] (ข้อ 4) -> array (multi-choice), ข้ออื่นๆ -> int/null
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState(
     questions.map((_, i) => (i === 3 ? [] : null))
@@ -265,7 +259,56 @@ export default function RiskAssessment() {
   useEffect(() => {
     const id = getOrCreateAnonymousId();
     setAnonymousId(id);
-  }, []);
+
+    // ตรวจสอบว่ามาจากหน้าที่ทำเสร็จแล้วหรือไม่
+    if (location.state?.fromCompleted && location.state?.resultData) {
+      // โหลดข้อมูลที่เคยทำไว้
+      const { answers: savedAnswers, resultData } = location.state;
+
+      if (savedAnswers) {
+        setAnswers(savedAnswers);
+      }
+
+      setShowResult(true);
+      setSubmitted(true);
+      setShowDcaCalculator(true);
+      setSelectedResult(resultData.riskResult);
+      setDcaInitialValues(resultData.dcaInitialValues);
+
+      // เลื่อนไปยัง DCA Calculator
+      setTimeout(() => {
+        const dcaElement = document.getElementById("dca-calculator");
+        if (dcaElement) {
+          dcaElement.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 300);
+    } else {
+      // ตรวจสอบว่ามีข้อมูล part2 เก่าหรือไม่
+      const savedPart2Data = localStorage.getItem("riskAssessmentPart2");
+      if (savedPart2Data) {
+        const data = JSON.parse(savedPart2Data);
+        setAnswers(
+          data.answers || questions.map((_, i) => (i === 3 ? [] : null))
+        );
+        setCurrentQuestion(data.currentQuestion || 0);
+      }
+    }
+  }, [location.state]);
+
+  // บันทึกข้อมูล part2 เมื่อมีการเปลี่ยนแปลง
+  useEffect(() => {
+    if (!location.state?.fromCompleted) {
+      const part2Data = {
+        answers,
+        currentQuestion,
+        timestamp: new Date().toISOString(),
+      };
+      localStorage.setItem("riskAssessmentPart2", JSON.stringify(part2Data));
+    }
+  }, [answers, currentQuestion, location.state?.fromCompleted]);
 
   const riskLevelText =
     part1Data.investmentType === "stock"
@@ -317,6 +360,13 @@ export default function RiskAssessment() {
   };
 
   const resetAssessment = () => {
+    // เคลียร์ทุก localStorage
+    localStorage.removeItem("riskAssessmentPart1");
+    localStorage.removeItem("riskAssessmentPart2");
+    localStorage.removeItem("riskAssessmentResult");
+    localStorage.removeItem("riskAssessmentCompleted");
+
+    // รีเซ็ต state
     setCurrentQuestion(0);
     setAnswers(questions.map((_, i) => (i === 3 ? [] : null)));
     setShowResult(false);
@@ -324,6 +374,7 @@ export default function RiskAssessment() {
     setShowDcaCalculator(false);
     setDcaInitialValues(null);
     setSelectedResult(null);
+
     navigate("/Riskassessment1");
   };
 
@@ -368,6 +419,15 @@ export default function RiskAssessment() {
         (rl) => totalScore >= rl.min && totalScore <= rl.max
       );
 
+      const dcaValues = {
+        years: part1Data.years,
+        initial: part1Data.monthly,
+        expectedReturn: riskResult?.recommendedReturn,
+        contribute: part1Data.monthly,
+        advice: riskResult?.advice,
+        because: riskResult?.because,
+      };
+
       const data = {
         anonymousId: anonymousId,
         timestamp: new Date().toISOString(),
@@ -375,7 +435,7 @@ export default function RiskAssessment() {
         riskLevel: riskResult?.label,
         riskAdvice: riskResult?.advice,
         answers: JSON.stringify(answersDetail),
-        ...part1Data, // ส่ง part1Data ไปด้วย
+        ...part1Data,
       };
 
       const response = await fetch(`${API_BASE_URL}/assessment`, {
@@ -388,25 +448,32 @@ export default function RiskAssessment() {
         throw new Error("Server responded with an error!");
       }
 
+      // บันทึกผลลัพธ์ลง localStorage
+      const resultData = {
+        riskResult,
+        dcaInitialValues: dcaValues,
+        totalScore,
+        answers,
+        timestamp: new Date().toISOString(),
+      };
+
+      localStorage.setItem("riskAssessmentResult", JSON.stringify(resultData));
+      localStorage.setItem("riskAssessmentCompleted", "true");
+
       setSubmitted(true);
       setShowDcaCalculator(true);
-      setDcaInitialValues({
-        years: part1Data.years,
-        initial: part1Data.monthly,
-        expectedReturn: riskResult?.recommendedReturn,
-        contribute: part1Data.monthly,
-        advice: riskResult?.advice,
-        because: riskResult?.because,
-      });
-       setTimeout(() => {
-      const dcaElement = document.getElementById('dca-calculator');
-      if (dcaElement) {
-        dcaElement.scrollIntoView({ 
-          behavior: 'smooth',
-          block: 'start' // เลื่อนให้ element อยู่ด้านบนของหน้าจอ
-        });
-      }
-    }, 300);
+      setDcaInitialValues(dcaValues);
+
+      setTimeout(() => {
+        const dcaElement = document.getElementById("dca-calculator");
+        if (dcaElement) {
+          dcaElement.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 300);
+
       alert("ส่งผลการประเมินเรียบร้อยแล้ว!");
     } catch (error) {
       console.error("Error sending data:", error);
@@ -415,6 +482,7 @@ export default function RiskAssessment() {
       setIsSubmitting(false);
     }
   };
+
   // totalScore ใหม่
   const totalScore = answers.reduce((sum, ans, idx) => {
     if (idx === 3) {
@@ -447,7 +515,6 @@ export default function RiskAssessment() {
       );
     }
 
-    // แก้ UI ให้ข้อ 4 เลือกหลายข้อและไฮไลต์ toggle ได้
     return (
       <>
         {/* Progress and Navigation */}
@@ -463,8 +530,7 @@ export default function RiskAssessment() {
                   draggable={false}
                 />
               </div>
-            ) : null}
-            {currentQuestion !== 6 ? (
+            ) : (
               <div className="flex justify-center items-center ">
                 <img
                   src={pg1}
@@ -473,9 +539,7 @@ export default function RiskAssessment() {
                   draggable={false}
                 />
               </div>
-            ) : null}
-
-
+            )}
           </div>
 
           {/* ส่วนเนื้อหาด้านขวา */}
@@ -542,7 +606,6 @@ export default function RiskAssessment() {
                 {currentQuestion === 3 && (
                   <div className="mt-2 text-xs text-gray-500">
                     * ข้อนี้สามารถเลือกได้มากกว่า 1 ข้อ
-
                   </div>
                 )}
                 <div className="flex justify-between pt-6 border-t border-gray-100">
@@ -579,7 +642,6 @@ export default function RiskAssessment() {
                     </button>
                   ) : (
                     <button
-
                       onClick={() =>
                         setCurrentQuestion((prev) =>
                           Math.min(questions.length - 1, prev + 1)
@@ -591,7 +653,6 @@ export default function RiskAssessment() {
                           ? "bg-gray-200 text-white cursor-not-allowed"
                           : "bg-gray-400 text-white hover:bg-green-500"
                       }`}
-
                     >
                       ถัดไป
                     </button>
@@ -601,14 +662,11 @@ export default function RiskAssessment() {
             </div>
           </div>
         </div>
-
-
       </>
     );
   };
 
   const renderResultView = () => (
-
     <div className="space-y-5 text-center ">
       <div className="bg-gradient-to-r from-[#d5e5ff] to-[#d1ffe5] p-6 rounded-2xl mx-auto w-[950px] min-h-[450px]">
         <h2 className="text-3xl font-normal text-gray-800 mb-4 mt-2">
@@ -631,7 +689,6 @@ export default function RiskAssessment() {
                 />
               )}
             </div>
-
           </div>
           <div className="text-3xl text-black font-[450] m-2">
             โดยคุณสนใจลงทุนใน :{" "}
@@ -640,7 +697,7 @@ export default function RiskAssessment() {
           <div className="text-3xl font-[450] text-black m-2">
             ด้วยเงินจำนวน{" "}
             <span className="text-[#6C63FF]">
-              {part1Data.monthly.toLocaleString()}
+              {part1Data.monthly?.toLocaleString()}
             </span>{" "}
             บาท/เดือน{" "}
           </div>
@@ -653,34 +710,39 @@ export default function RiskAssessment() {
         มาดูการลงทุน <span className="text-[#38cf53] text-5xl">DCA</span>{" "}
         ที่เหมาะสมกับคุณกัน!
       </div>
-      <div className="flex gap-3 justify-center flex-wrap m-18 ">
-        <button
-          onClick={sendToGoogleSheets}
-          disabled={isSubmitting || submitted}
-          className={`flex items-center gap-2 px-5 py-2 rounded-lg font-medium transition-colors text-sm ${submitted
-            ? "bg-green-100 text-green-700 cursor-not-allowed"
-            : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
-        >
-          {isSubmitting ? (
-            <>
-              <RefreshCw className="animate-spin" size={18} /> กำลังส่ง...
-            </>
-          ) : submitted ? (
-            <>
-              <CheckCircle size={18} /> ส่งผลแล้ว
-            </>
-          ) : (
-            <>
-              <Send size={18} /> ส่งผลการประเมิน
-            </>
-          )}
-        </button>
+      <div className="flex gap-3 justify-center flex-wrap z-30 ">
+        {!submitted && (
+          <button
+            onClick={sendToGoogleSheets}
+            disabled={isSubmitting}
+            className="flex items-center gap-2 px-5 py-2 rounded-lg font-medium transition-colors text-sm bg-blue-600 text-white hover:bg-blue-700"
+          >
+            {isSubmitting ? (
+              <>
+                <RefreshCw className="animate-spin" size={18} /> กำลังส่ง...
+              </>
+            ) : (
+              <>
+                <Send size={18} />  <span>ส่งผลการประเมิน</span>
+              </>
+            )}
+          </button>
+        )}
+
+        {submitted && (
+          <button
+            className="flex items-center gap-2 px-5 py-2 rounded-lg font-medium text-sm bg-green-100 text-green-700 cursor-not-allowed"
+            disabled
+          >
+            <CheckCircle size={18} /> <span>ส่งผลแล้ว</span>
+          </button>
+        )}
+
         <button
           onClick={resetAssessment}
-          className="px-5 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm"
+          className="flex items-center gap-2 px-5 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm z-50"
         >
-          ประเมินใหม่
+          <RotateCcw size={18} /> <span>ประเมินใหม่</span>
         </button>
       </div>
     </div>
@@ -708,17 +770,13 @@ export default function RiskAssessment() {
                 เป้าหมายในการลงทุน
               </button>
               <button
-
                 className="bg-green-500 text-white font-inter px-9 py-3 text-lg rounded-full focus:outline-none"
-
                 disabled
               >
                 ความเสี่ยงที่คุณรับได้
               </button>
               <button
-
                 className="bg-white text-black font-inter px-9 py-3 text-lg rounded-full focus:outline-none"
-
                 disabled
               >
                 DCA ที่เหมาะสมกับคุณ

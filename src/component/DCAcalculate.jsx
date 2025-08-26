@@ -62,14 +62,14 @@ export default function DCAcalculator({ initialValues }) {
         <img
           src="/Group 432.png" // 🔁 ใส่ path รูปเหรียญล่างซ้าย
           alt="Coin Bottom Left"
-          className="w-[900px] h-[650px] object-contain "
+          className="w-[900px] h-[650px] object-contain pointer-events-none "
         />
       </div>
-      <div className="absolute top-[770px] right-[-240px] z-20">
+      <div className="absolute top-[750px] right-[-240px] z-20">
         <img
           src="/Group 388.png" // 🔁 ใส่ path รูปเหรียญขวา
           alt="Coin Right"
-          className="w-[1100px] h-[1100px] object-contain "
+          className="w-[1100px] h-[1100px] object-contain pointer-events-none "
         />
       </div>
       <div className="w-1/3 flex items-center justify-center p-6 ml-6">

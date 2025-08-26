@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import page1 from "../assets/page1.png";
 import page2 from "../assets/page2.png";
 import useNoScale from "../hooks/useNoScale";
-// --- DATA CONSTANTS ---
 
 export default function Riskassessment1() {
   useNoScale();
@@ -14,6 +13,39 @@ export default function Riskassessment1() {
   const [investmentType, setInvestmentType] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // ตรวจสอบว่ามีข้อมูลเก่าใน localStorage หรือไม่
+  useEffect(() => {
+    // ตรวจสอบว่าทำแบบสอบถามเสร็จแล้วหรือยัง
+    const isCompleted = localStorage.getItem('riskAssessmentCompleted');
+    const savedPart1Data = localStorage.getItem('riskAssessmentPart1');
+    const savedResultData = localStorage.getItem('riskAssessmentResult');
+
+    // ถ้าทำเสร็จแล้วให้ไปหน้าผลลัพธ์เลย
+    if (isCompleted === 'true' && savedPart1Data && savedResultData) {
+      const part1Data = JSON.parse(savedPart1Data);
+      const resultData = JSON.parse(savedResultData);
+      
+      navigate("/Riskassessment2", {
+        state: {
+          ...part1Data,
+          fromCompleted: true,
+          resultData: resultData
+        },
+      });
+      return;
+    }
+
+    // ถ้ายังไม่เสร็จ แต่มีข้อมูล part1 เก่าให้โหลดมา
+    if (savedPart1Data) {
+      const data = JSON.parse(savedPart1Data);
+      setGoal(data.goal || "");
+      setMonthly(data.monthly || "");
+      setDcaIncrease(data.dcaIncrease || false);
+      setYears(data.years || "");
+      setInvestmentType(data.investmentType || "");
+    }
+  }, [navigate]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,21 +68,41 @@ export default function Riskassessment1() {
       return;
     }
 
+    const part1Data = {
+      goal,
+      years,
+      monthly,
+      dcaIncrease,
+      investmentType,
+    };
+
+    // บันทึกข้อมูล part1 ลง localStorage
+    localStorage.setItem('riskAssessmentPart1', JSON.stringify(part1Data));
+
     navigate("/Riskassessment2", {
-      state: {
-        goal,
-        years,
-        monthly,
-        dcaIncrease,
-        investmentType,
-      },
+      state: part1Data,
     });
+  };
+
+  // ฟังก์ชันรีเซ็ตข้อมูลทั้งหมด
+  const handleResetAssessment = () => {
+    localStorage.removeItem('riskAssessmentPart1');
+    localStorage.removeItem('riskAssessmentPart2');
+    localStorage.removeItem('riskAssessmentResult');
+    localStorage.removeItem('riskAssessmentCompleted');
+    
+    setGoal("");
+    setMonthly("");
+    setDcaIncrease(false);
+    setYears("");
+    setInvestmentType("");
+    setError("");
   };
 
   useEffect(() => {
     document.body.style.overflow = "";
-    document.body.style.scrollbarWidth = "none"; // Firefox
-    document.body.style["-ms-overflow-style"] = "none"; // IE/Edge
+    document.body.style.scrollbarWidth = "none";
+    document.body.style["-ms-overflow-style"] = "none";
     const styleTag = document.createElement("style");
     styleTag.innerHTML = `body::-webkit-scrollbar { display: none !important; }`;
     document.head.appendChild(styleTag);
@@ -62,6 +114,7 @@ export default function Riskassessment1() {
       if (styleTag.parentNode) styleTag.parentNode.removeChild(styleTag);
     };
   }, []);
+
   return (
     <div className="min-h-screen bg-white flex flex-col justify-start text-sm items-center pt-8 font-prompt ">
       <div className="flex flex-col items-center mb-4">
@@ -92,8 +145,21 @@ export default function Riskassessment1() {
             DCA ที่เหมาะสมกับคุณ
           </button>
         </div>
+
+        {/* ปุ่มรีเซ็ตข้อมูล (แสดงเฉพาะเมื่อมีข้อมูลเก่า) */}
+        {localStorage.getItem('riskAssessmentPart1') && (
+          <div className="mb-4">
+            <button
+              onClick={handleResetAssessment}
+              className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600 transition-colors"
+            >
+              รีเซ็ตแบบประเมิน (เริ่มใหม่)
+            </button>
+          </div>
+        )}
       </div>
-      <div className="max-w-7xl w-full grid grid-cols-3 items-start  ml-15 pl-15 ">
+
+      <div className="max-w-7xl w-full grid grid-cols-3 items-start ml-15 pl-15 ">
         {/* รูปมือถือ/คนด้านซ้าย */}
         <div className=" col-span-1 items-center pb-2 mb-8 mr-5  ">
           <img
